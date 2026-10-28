@@ -2,6 +2,8 @@
 
 An interactive clinical and technical simulation built for the **WHO Pre-GDHF (Global Digital Health Forum) Workshop Planning Group**.
 
+**Live Demo (GitHub Pages):** [https://fredhersch.github.io/vaxlink/](https://fredhersch.github.io/vaxlink/)
+
 This application illustrates a multi-stage cross-border immunization and continuity of care vignette between **Thailand (Country A)** and **Lao PDR (Country B)**, demonstrating how decentralized public key infrastructure (**WHO GDHCN**), offline-first frontline capture (**Open Health Stack / OHS**), and patient-mediated portability (**IHE ITI Verifiable Health Links / VHL**) work together seamlessly.
 
 ---
