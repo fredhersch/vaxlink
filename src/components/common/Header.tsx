@@ -1,19 +1,7 @@
 import React from 'react';
 import { ActiveTab, ScreenId } from '../../types';
 import { JOURNEY_STAGES } from '../../data/storylineData';
-import { 
-  GitBranch, 
-  Smartphone, 
-  Layers, 
-  FileCode, 
-  BookOpen, 
-  RotateCcw, 
-  Globe2, 
-  ShieldCheck, 
-  ChevronRight,
-  Eye,
-  Route
-} from 'lucide-react';
+import { Smartphone, RotateCcw, Globe2, ChevronRight, Eye, Route } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -90,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Mode switcher: the journey (story + technical layer) or the live device demo */}
         <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-medium text-slate-600 overflow-x-auto">
           <button
             onClick={() => setActiveTab('journeys')}
@@ -101,21 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <Route className="w-3.5 h-3.5 text-rose-500" />
-            <span>User Journeys</span>
-          </button>
-
-          <span className="w-px h-5 bg-slate-300 mx-1 flex-shrink-0" aria-hidden />
-
-          <button
-            onClick={() => setActiveTab('storyboard')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
-              activeTab === 'storyboard'
-                ? 'bg-white text-clinical-ink shadow-sm font-semibold'
-                : 'hover:text-clinical-ink'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5 text-sky-600" />
-            <span>S0 Storyboard Canvas</span>
+            <span>Journeys</span>
           </button>
 
           <button
@@ -127,43 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <Smartphone className="w-3.5 h-3.5 text-sky-600" />
-            <span>Interactive Device Screens</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('journey-flow')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
-              activeTab === 'journey-flow'
-                ? 'bg-white text-clinical-ink shadow-sm font-semibold'
-                : 'hover:text-clinical-ink'
-            }`}
-          >
-            <GitBranch className="w-3.5 h-3.5 text-sky-600" />
-            <span>End-to-End Flow & Architecture</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('fhir-inspector')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
-              activeTab === 'fhir-inspector'
-                ? 'bg-white text-clinical-ink shadow-sm font-semibold'
-                : 'hover:text-clinical-ink'
-            }`}
-          >
-            <FileCode className="w-3.5 h-3.5 text-sky-600" />
-            <span>FHIR Payloads</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('workshop-guide')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
-              activeTab === 'workshop-guide'
-                ? 'bg-white text-clinical-ink shadow-sm font-semibold'
-                : 'hover:text-clinical-ink'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-sky-600" />
-            <span>Workshop Guide</span>
+            <span>Device Demo</span>
           </button>
         </div>
 
@@ -187,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="text-[11px] font-semibold text-clinical-steel uppercase tracking-wider mr-2">
               Journey Stage:
             </span>
-            {JOURNEY_STAGES.filter((s) => s.screenId !== 'S0').map((stage, idx) => {
+            {JOURNEY_STAGES.map((stage, idx) => {
               const isActive = currentScreenId === stage.screenId;
               return (
                 <React.Fragment key={stage.screenId}>

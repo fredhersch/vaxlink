@@ -124,27 +124,6 @@ export const SUBSEQUENT_LAO_IMMUNIZATIONS: ImmunizationRecord[] = [
 
 export const JOURNEY_STAGES: JourneyStage[] = [
   {
-    id: "stage-0",
-    screenId: "S0",
-    stageCode: "Master",
-    title: "Master Storyboard Canvas",
-    subtitle: "End-to-End Visual Topology & Architecture Overview",
-    country: "Cross-Border",
-    countryCode: "THA",
-    location: "Plenary Canvas (Web 1440px)",
-    actor: "Workshop Facilitator / All Delegates",
-    actorRole: "WHO Pre-GDHF Working Group",
-    appConfig: "Desktop Storyboard Overview",
-    deviceType: "DESKTOP",
-    timeline: "T0 → T0+12 Months",
-    statusBadge: {
-      label: "Master Architecture",
-      variant: "info",
-    },
-    summary: "Complete 5-stage cross-border immunization lifecycle linking Thailand and Lao PDR via WHO GDHCN trust network, Open Health Stack (OHS), and Verifiable Health Links (VHL).",
-    learningObjective: "Understand the end-to-end data flow, trust handoffs, offline-first clinical capture, and cross-border portability without central data retention.",
-  },
-  {
     id: "stage-1",
     screenId: "S1",
     stageCode: "J1",

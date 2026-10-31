@@ -6,7 +6,6 @@ import { DeviceFrame } from './components/common/DeviceFrame';
 import { FhirInspectorDrawer } from './components/common/FhirInspectorDrawer';
 
 // Screens
-import { S0_Storyboard } from './components/screens/S0_Storyboard';
 import { S1_BirthDosePreview } from './components/screens/S1_BirthDosePreview';
 import { S2_ChwRegistration } from './components/screens/S2_ChwRegistration';
 import { S3_ChwScanReferral } from './components/screens/S3_ChwScanReferral';
@@ -16,9 +15,6 @@ import { S6_FamilyWallet } from './components/screens/S6_FamilyWallet';
 import { S7_VhlQrDisplay } from './components/screens/S7_VhlQrDisplay';
 import { S8_ForeignClinicViewer } from './components/screens/S8_ForeignClinicViewer';
 
-// Additional Pages
-import { InteractiveJourneyFlow } from './components/journeyFlow/InteractiveJourneyFlow';
-import { WorkshopGuide } from './components/workshopGuide/WorkshopGuide';
 import { UserJourneys, JourneyView } from './components/userJourneys/UserJourneys';
 import { JOURNEY_STEPS, PersonaId } from './data/journeyData';
 import { FhirInspectorTab } from './data/techData';
@@ -41,16 +37,7 @@ export function App() {
   const [isFhirDrawerOpen, setIsFhirDrawerOpen] = useState<boolean>(false);
   const [isPresenterMode, setIsPresenterMode] = useState<boolean>(true);
 
-  const currentStageMetadata = JOURNEY_STAGES.find((s) => s.screenId === currentScreenId) || JOURNEY_STAGES[1];
-
-  const handleSelectScreen = (screenId: ScreenId) => {
-    if (screenId === 'S0') {
-      setActiveTab('storyboard');
-    } else {
-      setCurrentScreenId(screenId);
-      setActiveTab('screens');
-    }
-  };
+  const currentStageMetadata = JOURNEY_STAGES.find((s) => s.screenId === currentScreenId) || JOURNEY_STAGES[0];
 
   const openScreenFromJourney = (screenId: ScreenId) => {
     setCurrentScreenId(screenId);
@@ -158,12 +145,10 @@ export function App() {
                   ? `Moment ${JOURNEY_STEPS[journeyStepIndex].stageCode} — ${JOURNEY_STEPS[journeyStepIndex].facilitatorCue}`
                   : journeyView === 'how'
                   ? 'Use this when the room asks "how?": start from a big idea, then show which moments in the journey depend on it.'
+                  : journeyView === 'discuss'
+                  ? 'Close the session: take one question per table, and use the moment links to revisit the story.'
                   : 'Lead with people, not screens: introduce the cast, walk the four moments, then drop into a screen only when the room asks "what does that look like?"')}
-              {activeTab === 'storyboard' && 'Screen S0 provides a 5-column birds-eye view for plenary presentations & workshop context.'}
               {activeTab === 'screens' && `Stage ${currentStageMetadata.stageCode} (${currentStageMetadata.title}) — ${currentStageMetadata.learningObjective}`}
-              {activeTab === 'journey-flow' && 'End-to-End Architecture Flow maps data handoffs, cryptographic trust, and FHIR mutations across borders.'}
-              {activeTab === 'fhir-inspector' && 'Full developer inspection bar displaying syntax-highlighted FHIR R4 resources & COSE headers.'}
-              {activeTab === 'workshop-guide' && 'Facilitator companion with policy takeaways & discussion questions for Pre-GDHF delegates.'}
             </span>
           </div>
           <button
@@ -192,15 +177,7 @@ export function App() {
           />
         )}
 
-        {/* Tab 1: S0 Master Storyboard Canvas */}
-        {activeTab === 'storyboard' && (
-          <S0_Storyboard
-            onSelectScreen={handleSelectScreen}
-            onOpenFhirInspector={() => setIsFhirDrawerOpen(true)}
-          />
-        )}
-
-        {/* Tab 2: Interactive Device Screens (S1 - S8) */}
+        {/* Device Demo: interactive screens S1–S8 */}
         {activeTab === 'screens' && (
           <div className="px-4 md:px-8 pt-3 -mb-2 flex items-center gap-2 text-xs">
             <button
@@ -231,44 +208,6 @@ export function App() {
           </DeviceFrame>
         )}
 
-        {/* Tab 3: End-to-End Architecture & Interactive Flow */}
-        {activeTab === 'journey-flow' && (
-          <InteractiveJourneyFlow
-            onNavigateToScreen={(screenId) => {
-              setCurrentScreenId(screenId);
-              setActiveTab('screens');
-            }}
-          />
-        )}
-
-        {/* Tab 4: Dedicated FHIR Inspector Tab */}
-        {activeTab === 'fhir-inspector' && (
-          <div className="p-6 max-w-5xl mx-auto w-full">
-            <div className="mb-4">
-              <h2 className="text-lg font-bold text-clinical-ink">
-                FHIR R4 & WHO GDHCN Technical Resource Inspector
-              </h2>
-              <p className="text-xs text-clinical-steel">
-                Inspect structured clinical resources, provenance, concept mappings, and raw CBOR payloads.
-              </p>
-            </div>
-            <FhirInspectorDrawer
-              currentStageCode={currentStageMetadata.stageCode}
-              isOpen={true}
-              onToggle={() => {}}
-            />
-          </div>
-        )}
-
-        {/* Tab 5: Workshop Guide & Policy Companion */}
-        {activeTab === 'workshop-guide' && (
-          <WorkshopGuide
-            onNavigateToScreen={(screenId) => {
-              setCurrentScreenId(screenId);
-              setActiveTab('screens');
-            }}
-          />
-        )}
       </main>
 
       {/* Persistent Collapsible Developer Payload Drawer */}

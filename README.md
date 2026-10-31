@@ -33,14 +33,15 @@ The site leads with **people and moments**. The technical layer (standards, tool
 
 ## 🎤 Running a workshop session
 
-The site opens on **User Journeys**. A suggested order:
+The site has two modes in the top bar: **Journeys** (the story and its technical layer) and **Device Demo** (the live screens). It opens on Journeys. A suggested order:
 
 1. **Overview:** introduce the story in one sentence and the cast.
 2. **Walkthrough:** present the eight moments one at a time. For each one, use **Ask the room**, then reveal the **What if…** branch.
 3. **Under the hood:** turn it on in the walkthrough (press **T**) when the room wants to know how a moment works.
 4. **Persona lens:** use it for discussion, e.g. why Khamla's mood dips when the records live on Bounmy's phone.
 5. **How it works:** use it for technical questions. Pick a standard or tool to see every moment that depends on it.
-6. **Device screens:** open one from any moment ("See what … sees") to show the real interface. The tamper and wrong-passcode tests live on screens S4 and S8.
+6. **Device Demo:** open a screen from any moment ("See what … sees") to show the real interface. The tamper and wrong-passcode tests live on screens S4 and S8.
+7. **Discussion:** close with the four policy questions. Moving past the last moment in the walkthrough opens it automatically.
 
 **Presenter mode** (top right) shows a facilitator cue for the current moment in the banner and in the walkthrough. Turn it off before sharing your screen if you don't want the cues visible.
 
@@ -48,7 +49,7 @@ The site opens on **User Journeys**. A suggested order:
 
 | Key | Action |
 |---|---|
-| `→` / `PageDown` | Next moment |
+| `→` / `PageDown` | Next moment (from the last moment, opens Discussion) |
 | `←` / `PageUp` | Previous moment |
 | `W` | Reveal or hide the "What if…" branch |
 | `T` | Show or hide "Under the hood" |
@@ -57,15 +58,16 @@ The site opens on **User Journeys**. A suggested order:
 
 ## 🧭 What's in the app
 
-### User Journeys (default tab)
+### Journeys (default mode)
 
 | View | Use it to… |
 |---|---|
 | **Overview** | Tell the story, introduce the four moments and the cast, and show the "Follow the record" trust ladder (on paper → reported → verified → scheduled → portable → shared & audited) |
-| **Walkthrough** | Present one moment at a time: who's involved and how they feel, pain point vs. enabler, how the record's trust changes, "Ask the room", "What if…", the facilitator cue and **Under the hood** |
+| **Walkthrough** | Present one moment at a time: who's involved and how they feel, pain point vs. enabler, how the record's trust changes, "Ask the room", "What if…", the **policy takeaway**, the facilitator cue and **Under the hood** |
 | **Journey map** | See everyone at every moment as a swimlane, with optional rows for pain points, enablers and the technical layer. Focus on one persona to dim the rest |
 | **Persona lens** | Follow one person end to end: goals, needs, frustrations, an emotion curve and touchpoints |
 | **How it works** | Connect the journey to the architecture: four big ideas and a grid of building blocks against moments, with a detail panel for each standard or tool |
+| **Discussion** | Close the session with four policy questions for delegates (each linked to the moments it relates to) and every moment's policy takeaway |
 
 **Under the hood** (per moment) shows:
 - a plain-language technical so-what;
@@ -73,17 +75,12 @@ The site opens on **User Journeys**. A suggested order:
 - the data hand-off (and whether it works offline);
 - the FHIR resources it changes, with **Inspect JSON** links into the payload drawer.
 
-### Technical deep dives
+The **FHIR payload drawer** at the bottom of every page shows syntax-highlighted `Patient`, `Group`, `Immunization`, `ServiceRequest`, `Provenance`, `ConceptMap`, `AuditEvent` and raw CBOR/COSE payloads, with copy to clipboard.
 
-| Tab | Contents |
-|---|---|
-| **S0 Storyboard Canvas** | A five-column overview by country for plenary sessions, with clinical and FHIR/GDHCN architecture views |
-| **Interactive Device Screens** | Screens S1–S8, simulating each actor's device (see below) |
-| **End-to-End Flow & Architecture** | A cross-border swimlane, plus a per-stage deep dive into actors, cryptography, FHIR changes and policy takeaways |
-| **FHIR Payloads** | Syntax-highlighted `Patient`, `Group`, `Immunization`, `ServiceRequest`, `Provenance`, `ConceptMap`, `AuditEvent` and raw CBOR/COSE, with copy to clipboard |
-| **Workshop Guide** | Architectural pillars and policy discussion questions for delegates |
+### Device Demo
 
-### Device screens
+Screens S1–S8 simulate each actor's device. A stage bar along the top jumps between them, and **Back to the user journey** returns to the matching moment.
+
 
 | Screen | Moment | Country · device | Shows |
 |---|---|---|---|
@@ -116,7 +113,7 @@ All narrative and technical content lives in data files, so you can change the s
 
 | File | Contains |
 |---|---|
-| `src/data/journeyData.ts` | Personas, the four chapters and eight moments. Per moment: actions, feelings, pain points, enablers, record state, "Ask the room", "What if…" and facilitator cues |
+| `src/data/journeyData.ts` | Personas, the four chapters and eight moments. Per moment: actions, feelings, pain points, enablers, record state, "Ask the room", "What if…", policy takeaway and facilitator cue. Also the closing discussion questions |
 | `src/data/techData.ts` | Building blocks (tools, standards, trust), the four big ideas' blocks, and each moment's technical layer: so-what, roles, data hand-off and FHIR changes |
 | `src/data/storylineData.ts` | Stage metadata for the device screens, patient demographics, the DEV signing key and the sample FHIR/CBOR payloads |
 
@@ -124,14 +121,12 @@ All narrative and technical content lives in data files, so you can change the s
 
 ```
 src/
-├── App.tsx                     # Tabs, shared state, presenter banner
+├── App.tsx                     # Journeys / Device Demo modes, shared state, presenter banner
 ├── data/                       # Content (see above)
 ├── types/index.ts
 └── components/
-    ├── userJourneys/           # Overview, Walkthrough, Journey map, Persona lens, How it works, Under the hood
-    ├── screens/                # S0 storyboard and S1–S8 device simulations
-    ├── journeyFlow/            # End-to-End Flow & Architecture tab
-    ├── workshopGuide/          # Workshop Guide tab
+    ├── userJourneys/           # Overview, Walkthrough, Journey map, Persona lens, How it works, Discussion, Under the hood
+    ├── screens/                # S1–S8 device simulations
     └── common/                 # Header, device frame, QR view, FHIR inspector drawer
 ```
 
