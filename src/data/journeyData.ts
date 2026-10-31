@@ -76,6 +76,8 @@ export interface JourneyStep {
     tryOnScreen?: string;
   };
   askTheRoom: string;
+  /** The policy point this moment makes, for delegates. */
+  policyTakeaway: string;
   facilitatorCue: string;
 }
 
@@ -259,6 +261,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       outcome: 'The doses still happened, but no proof travels. Lao clinicians must re-vaccinate or rely on memory.',
     },
     askTheRoom: 'What is the minimum a family should leave hospital with when their baby has no national ID?',
+    policyTakeaway: 'Babies born abroad can get a verifiable vaccine record without needing the host country’s civil registration or national ID.',
     facilitatorCue: 'Start with Khamla, not the technology. Hold up a paper card: this is the only thing that crosses the border.',
   },
   {
@@ -297,6 +300,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       outcome: 'Everything stays queued safely on the device and syncs when she next reaches the health center.',
     },
     askTheRoom: 'Who should be allowed to create a health identity for a newborn — and how early?',
+    policyTakeaway: 'Newborns can be registered at home, offline, before civil registration or a national ID exists.',
     facilitatorCue: 'Ask who in the room has worked with CHWs. What does “offline” really mean in their context?',
   },
   {
@@ -330,6 +334,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       outcome: 'Technically possible with a cached trust list — but who keeps it current on thousands of village phones?',
     },
     askTheRoom: 'Is an “unverified but recorded” vaccine useful to the next clinician — or a risk?',
+    policyTakeaway: 'Keep a clear line between what families report and what has been verified, and don’t grant trust too early.',
     facilitatorCue: 'This is the key trust boundary in the story. Pause and make sure everyone sees why the CHW does not verify.',
   },
   {
@@ -364,6 +369,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       tryOnScreen: 'Try “Simulate Tampered QR Card” on this screen',
     },
     askTheRoom: 'When verification fails, what should the nurse do — and how is it explained to the family?',
+    policyTakeaway: 'Trust is decentralized: a Lao clinic verifies a Thai signature itself, without contacting Thailand.',
     facilitatorCue: 'Open the screen and flip the tamper toggle live. The contrast lands better than any explanation.',
   },
   {
@@ -398,6 +404,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       tryOnScreen: 'Walk through the 3-layer match on this screen',
     },
     askTheRoom: 'Who should own the mapping between countries’ vaccine codes — WHO, each country, or each clinic?',
+    policyTakeaway: 'Never overwrite another country’s record: keep the original coding alongside the national one.',
     facilitatorCue: 'Emphasize: the Thai record is never overwritten. Both codes live side by side.',
   },
   {
@@ -431,6 +438,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       outcome: 'Who can access the baby’s record without Bounmy’s phone? Delegated access within a household is still an open design question.',
     },
     askTheRoom: 'How do we design for shared phones without compromising each person’s privacy?',
+    policyTakeaway: 'Design for shared devices (“One Family, One Phone”) so families with only one phone aren’t left out.',
     facilitatorCue: 'Notice Khamla’s mood dips here. Ask the room why — this is the equity tension in the story.',
   },
   {
@@ -459,6 +467,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       outcome: 'The link could be printed in advance, and the original paper cards still prove the birth doses.',
     },
     askTheRoom: 'Is a 4-digit spoken passcode the right balance of security and ease for this family?',
+    policyTakeaway: 'Data sovereignty: the record stays in Lao PDR until the family authorizes someone to open it.',
     facilitatorCue: 'Ask: what is inside this QR? (Answer: not the health data — just a pointer and a key.)',
   },
   {
@@ -498,6 +507,35 @@ export const JOURNEY_STEPS: JourneyStep[] = [
       tryOnScreen: 'Try the wrong-passcode test on this screen',
     },
     askTheRoom: 'Should the family be notified every time their child’s record is viewed abroad?',
+    policyTakeaway: 'Continuity of care across borders, with no central database, no international patient registry and no vendor lock-in.',
     facilitatorCue: 'Close the loop: the story started and ends in Thailand. Ask what changed for each persona since step 1.',
+  },
+];
+
+/** Closing questions for delegates (from the original Workshop Guide). */
+export const DISCUSSION_QUESTIONS: { id: string; theme: string; question: string; relatedSteps: string[] }[] = [
+  {
+    id: 'q1',
+    theme: 'Identity for babies born abroad',
+    question: 'How should national immunization systems handle temporary IDs for cross-border infants before civil registration is complete?',
+    relatedSteps: ['J1', 'J2a'],
+  },
+  {
+    id: 'q2',
+    theme: 'Where trust begins',
+    question: 'Why should offline CHW devices store foreign cards as “reported, not verified” rather than trying to verify them in the field?',
+    relatedSteps: ['J2b', 'J3a'],
+  },
+  {
+    id: 'q3',
+    theme: 'Matching vaccines across countries',
+    question: 'When a monovalent vaccine is given abroad but the home schedule uses a combination (e.g. pentavalent), how should schedule rules calculate the doses still due?',
+    relatedSteps: ['J3b'],
+  },
+  {
+    id: 'q4',
+    theme: 'Cross-border access and audit',
+    question: 'What agreements do countries need so that a clinician viewing a record abroad triggers an audit entry back in the patient’s home country?',
+    relatedSteps: ['J4.0b', 'J4.1'],
   },
 ];

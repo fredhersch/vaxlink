@@ -12,6 +12,7 @@ import {
   Sparkles,
   ArrowRight,
   Cpu,
+  Landmark,
 } from 'lucide-react';
 import { ScreenId } from '../../types';
 import { CHAPTERS, JOURNEY_STEPS, PERSONA_BY_ID, PersonaId, RECORD_TRUST_LADDER } from '../../data/journeyData';
@@ -26,9 +27,11 @@ interface Props {
   showFacilitatorNotes: boolean;
   onOpenBlock: (id: BuildingBlockId) => void;
   onInspectFhir: (tab: FhirInspectorTab) => void;
+  /** Called when moving past the last moment (opens the closing discussion). */
+  onFinish: () => void;
 }
 
-export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenScreen, showFacilitatorNotes, onOpenBlock, onInspectFhir }) => {
+export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenScreen, showFacilitatorNotes, onOpenBlock, onInspectFhir, onFinish }) => {
   const [revealWhatIf, setRevealWhatIf] = useState(false);
   const [showTech, setShowTech] = useState(true);
   const step = JOURNEY_STEPS[stepIndex];
@@ -36,7 +39,12 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
   const prevRecordLevel = stepIndex > 0 ? JOURNEY_STEPS[stepIndex - 1].record.level : -1;
   const recordMoved = step.record.level > prevRecordLevel;
 
+  const isLast = stepIndex === JOURNEY_STEPS.length - 1;
   const go = (delta: number) => {
+    if (delta > 0 && isLast) {
+      onFinish();
+      return;
+    }
     const next = Math.max(0, Math.min(JOURNEY_STEPS.length - 1, stepIndex + delta));
     if (next !== stepIndex) onChangeStep(next);
   };
@@ -100,10 +108,11 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
         </span>
         <button
           onClick={() => go(1)}
-          disabled={stepIndex === JOURNEY_STEPS.length - 1}
-          className="p-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-30"
-          aria-label="Next moment"
+          className="p-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 inline-flex items-center gap-1"
+          aria-label={isLast ? 'Go to discussion' : 'Next moment'}
+          title={isLast ? 'Go to discussion' : 'Next moment'}
         >
+          {isLast && <span className="text-xs font-semibold pl-1">Discuss</span>}
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
@@ -227,6 +236,13 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
                 Let the room guess, then reveal
               </button>
             )}
+          </section>
+
+          <section className="bg-white rounded-2xl border border-indigo-200 p-5 shadow-sm space-y-2">
+            <h3 className="text-xs font-bold text-indigo-800 uppercase tracking-wider flex items-center gap-1.5">
+              <Landmark className="w-4 h-4" /> Policy takeaway
+            </h3>
+            <p className="text-sm text-slate-800 leading-snug">{step.policyTakeaway}</p>
           </section>
 
           {showFacilitatorNotes && (
