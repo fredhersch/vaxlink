@@ -2,7 +2,7 @@ export type ScreenId = 'S0' | 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7' | '
 
 export type DeviceType = 'DESKTOP' | 'TABLET' | 'MOBILE';
 
-export type ActiveTab = 'storyboard' | 'screens' | 'journey-flow' | 'fhir-inspector' | 'workshop-guide';
+export type ActiveTab = 'journeys' | 'storyboard' | 'screens' | 'journey-flow' | 'fhir-inspector' | 'workshop-guide';
 
 export interface JourneyStage {
   id: string;

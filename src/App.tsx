@@ -19,9 +19,14 @@ import { S8_ForeignClinicViewer } from './components/screens/S8_ForeignClinicVie
 // Additional Pages
 import { InteractiveJourneyFlow } from './components/journeyFlow/InteractiveJourneyFlow';
 import { WorkshopGuide } from './components/workshopGuide/WorkshopGuide';
+import { UserJourneys, JourneyView } from './components/userJourneys/UserJourneys';
+import { JOURNEY_STEPS, PersonaId } from './data/journeyData';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('storyboard');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('journeys');
+  const [journeyView, setJourneyView] = useState<JourneyView>('overview');
+  const [journeyStepIndex, setJourneyStepIndex] = useState<number>(0);
+  const [journeyPersona, setJourneyPersona] = useState<PersonaId>('khamla');
   const [currentScreenId, setCurrentScreenId] = useState<ScreenId>('S1');
   const [isFramed, setIsFramed] = useState<boolean>(true);
   const [isFhirDrawerOpen, setIsFhirDrawerOpen] = useState<boolean>(false);
@@ -38,8 +43,15 @@ export function App() {
     }
   };
 
+  const openScreenFromJourney = (screenId: ScreenId) => {
+    setCurrentScreenId(screenId);
+    setActiveTab('screens');
+  };
+
   const handleResetSimulation = () => {
     setCurrentScreenId('S1');
+    setJourneyStepIndex(0);
+    setJourneyView('overview');
     setIsFhirDrawerOpen(false);
   };
 
@@ -132,6 +144,10 @@ export function App() {
               PRESENTER NOTE
             </span>
             <span>
+              {activeTab === 'journeys' &&
+                (journeyView === 'walkthrough'
+                  ? `Moment ${JOURNEY_STEPS[journeyStepIndex].stageCode} — ${JOURNEY_STEPS[journeyStepIndex].facilitatorCue}`
+                  : 'Lead with people, not screens: introduce the cast, walk the four moments, then drop into a screen only when the room asks "what does that look like?"')}
               {activeTab === 'storyboard' && 'Screen S0 provides a 5-column birds-eye view for plenary presentations & workshop context.'}
               {activeTab === 'screens' && `Stage ${currentStageMetadata.stageCode} (${currentStageMetadata.title}) — ${currentStageMetadata.learningObjective}`}
               {activeTab === 'journey-flow' && 'End-to-End Architecture Flow maps data handoffs, cryptographic trust, and FHIR mutations across borders.'}
@@ -150,6 +166,20 @@ export function App() {
 
       {/* Main Body Viewport */}
       <main className="flex-1 flex flex-col">
+        {/* Tab 0: User Journeys (default, facilitator-first) */}
+        {activeTab === 'journeys' && (
+          <UserJourneys
+            view={journeyView}
+            onChangeView={setJourneyView}
+            stepIndex={journeyStepIndex}
+            onChangeStep={setJourneyStepIndex}
+            personaId={journeyPersona}
+            onChangePersona={setJourneyPersona}
+            onOpenScreen={openScreenFromJourney}
+            showFacilitatorNotes={isPresenterMode}
+          />
+        )}
+
         {/* Tab 1: S0 Master Storyboard Canvas */}
         {activeTab === 'storyboard' && (
           <S0_Storyboard
@@ -159,6 +189,24 @@ export function App() {
         )}
 
         {/* Tab 2: Interactive Device Screens (S1 - S8) */}
+        {activeTab === 'screens' && (
+          <div className="px-4 md:px-8 pt-3 -mb-2 flex items-center gap-2 text-xs">
+            <button
+              onClick={() => {
+                const idx = JOURNEY_STEPS.findIndex((s) => s.screenId === currentScreenId);
+                if (idx >= 0) setJourneyStepIndex(idx);
+                setJourneyView('walkthrough');
+                setActiveTab('journeys');
+              }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 text-rose-800 font-semibold hover:bg-rose-100"
+            >
+              ← Back to the user journey
+            </button>
+            <span className="text-clinical-steel">
+              You are looking at what {currentStageMetadata.actor} sees at this moment.
+            </span>
+          </div>
+        )}
         {activeTab === 'screens' && (
           <DeviceFrame
             deviceType={currentStageMetadata.deviceType}
