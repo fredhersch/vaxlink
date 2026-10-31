@@ -77,6 +77,12 @@ npm run build
 npm run preview
 ```
 
+### Deploying to GitHub Pages
+
+The site deploys automatically: every push to `main` (including merged PRs) runs `.github/workflows/deploy.yml`, which builds the site and publishes it to GitHub Pages. You can also start it manually from **Actions → Deploy to GitHub Pages → Run workflow**.
+
+One-time setup: in **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**.
+
 ---
 
 ## 🛠 Tech Stack
