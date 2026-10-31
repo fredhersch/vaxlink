@@ -10,6 +10,14 @@ This application illustrates a multi-stage cross-border immunization and continu
 
 ## 🌟 Key Features
 
+0. **User Journeys (default landing page, facilitator-first)**
+   - **Overview:** the story in one sentence, the four moments that matter (Born abroad → Found at home → Made official → Crossing back), the cast of five personas, and a "follow the record" trust ladder.
+   - **Walkthrough:** present one moment at a time (← / → keys). Each moment shows who's involved and how they feel, what goes wrong without the system, what makes it work, how Somsack's record moves up the trust ladder, an "Ask the room" prompt, a reveal-on-demand "What if…" branch and a facilitator cue (shown in Presenter Mode).
+   - **Journey map:** a swimlane of every persona across all 8 moments, with emotion, record state, pain points, enablers and hand-offs. Focus on one persona to dim the rest.
+   - **Persona lens:** one person's goals, needs, frustrations, emotion curve and touchpoints end to end.
+   - Every moment links to the matching device screen (S1–S8), and the screens link back to the journey.
+   - Content lives in `src/data/journeyData.ts`, so you can edit the narrative without touching components.
+
 1. **S0: Master End-to-End Storyboard Canvas**
    - 5-column horizontal visual flow (J1 → J4.1)
    - Country lanes: Thailand (Issuer `XXR`) vs Lao PDR (Home Health System)

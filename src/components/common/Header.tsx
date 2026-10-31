@@ -11,7 +11,8 @@ import {
   Globe2, 
   ShieldCheck, 
   ChevronRight,
-  Eye
+  Eye,
+  Route
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -91,6 +92,20 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Tab Switcher */}
         <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-medium text-slate-600 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('journeys')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
+              activeTab === 'journeys'
+                ? 'bg-white text-clinical-ink shadow-sm font-semibold'
+                : 'hover:text-clinical-ink'
+            }`}
+          >
+            <Route className="w-3.5 h-3.5 text-rose-500" />
+            <span>User Journeys</span>
+          </button>
+
+          <span className="w-px h-5 bg-slate-300 mx-1 flex-shrink-0" aria-hidden />
+
           <button
             onClick={() => setActiveTab('storyboard')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
