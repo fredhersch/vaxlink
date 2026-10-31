@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MOCK_FHIR_RESOURCES, GDHCN_DEV_KEY } from '../../data/storylineData';
+import { FhirInspectorTab } from '../../data/techData';
 import { Code2, ChevronUp, ChevronDown, Copy, Check, ShieldCheck, Layers, FileJson, X } from 'lucide-react';
 
 interface FhirInspectorDrawerProps {
@@ -7,6 +8,8 @@ interface FhirInspectorDrawerProps {
   isOpen?: boolean;
   onToggle?: () => void;
   overrideResources?: Record<string, any>;
+  /** When set (e.g. from a journey moment), jump to this resource tab. */
+  focusTab?: FhirInspectorTab | null;
 }
 
 export const FhirInspectorDrawer: React.FC<FhirInspectorDrawerProps> = ({
@@ -14,8 +17,12 @@ export const FhirInspectorDrawer: React.FC<FhirInspectorDrawerProps> = ({
   isOpen = false,
   onToggle,
   overrideResources,
+  focusTab,
 }) => {
-  const [selectedTab, setSelectedTab] = useState<'patient' | 'immunization' | 'group' | 'serviceRequest' | 'provenance' | 'auditEvent' | 'cbor' | 'conceptMap'>('immunization');
+  const [selectedTab, setSelectedTab] = useState<FhirInspectorTab>('immunization');
+  useEffect(() => {
+    if (focusTab) setSelectedTab(focusTab);
+  }, [focusTab]);
   const [copied, setCopied] = useState<boolean>(false);
 
   const mergedResources = {

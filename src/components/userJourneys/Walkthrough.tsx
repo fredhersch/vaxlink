@@ -11,20 +11,26 @@ import {
   AlertTriangle,
   Sparkles,
   ArrowRight,
+  Cpu,
 } from 'lucide-react';
 import { ScreenId } from '../../types';
 import { CHAPTERS, JOURNEY_STEPS, PERSONA_BY_ID, PersonaId, RECORD_TRUST_LADDER } from '../../data/journeyData';
 import { EmotionBadge, PersonaAvatar, TrustMeter, countryChip } from './shared';
+import { TechLayerPanel } from './TechLayerPanel';
+import { BuildingBlockId, FhirInspectorTab } from '../../data/techData';
 
 interface Props {
   stepIndex: number;
   onChangeStep: (index: number) => void;
   onOpenScreen: (screenId: ScreenId) => void;
   showFacilitatorNotes: boolean;
+  onOpenBlock: (id: BuildingBlockId) => void;
+  onInspectFhir: (tab: FhirInspectorTab) => void;
 }
 
-export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenScreen, showFacilitatorNotes }) => {
+export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenScreen, showFacilitatorNotes, onOpenBlock, onInspectFhir }) => {
   const [revealWhatIf, setRevealWhatIf] = useState(false);
+  const [showTech, setShowTech] = useState(true);
   const step = JOURNEY_STEPS[stepIndex];
   const chapter = CHAPTERS.find((c) => c.id === step.chapterId)!;
   const prevRecordLevel = stepIndex > 0 ? JOURNEY_STEPS[stepIndex - 1].record.level : -1;
@@ -44,6 +50,7 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
       if (e.key === 'ArrowRight' || e.key === 'PageDown') go(1);
       if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(-1);
       if (e.key.toLowerCase() === 'w') setRevealWhatIf((v) => !v);
+      if (e.key.toLowerCase() === 't') setShowTech((v) => !v);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -89,7 +96,7 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
           })}
         </div>
         <span className="hidden md:flex items-center gap-1 text-[10px] text-slate-400 font-mono">
-          <Keyboard className="w-3.5 h-3.5" /> ← → · W
+          <Keyboard className="w-3.5 h-3.5" /> ← → · W · T
         </span>
         <button
           onClick={() => go(1)}
@@ -239,6 +246,22 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
           </button>
         </div>
       </div>
+
+      <div className="flex items-center gap-3">
+        <span className="flex-1 border-t border-slate-200" />
+        <button
+          onClick={() => setShowTech((v) => !v)}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold border transition ${
+            showTech ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+          }`}
+        >
+          <Cpu className="w-3.5 h-3.5" />
+          {showTech ? 'Hide what’s under the hood' : 'Show what’s under the hood'}
+        </button>
+        <span className="flex-1 border-t border-slate-200" />
+      </div>
+
+      {showTech && <TechLayerPanel step={step} onOpenBlock={onOpenBlock} onInspectFhir={onInspectFhir} />}
     </div>
   );
 };

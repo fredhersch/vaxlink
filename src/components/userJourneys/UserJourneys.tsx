@@ -1,13 +1,15 @@
-import React from 'react';
-import { Compass, Map, User, Presentation } from 'lucide-react';
+import React, { useState } from 'react';
+import { Compass, Map, User, Presentation, Cpu } from 'lucide-react';
 import { ScreenId } from '../../types';
 import { PersonaId } from '../../data/journeyData';
 import { JourneyOverview } from './JourneyOverview';
 import { JourneyMap } from './JourneyMap';
 import { PersonaLens } from './PersonaLens';
 import { Walkthrough } from './Walkthrough';
+import { HowItWorks } from './HowItWorks';
+import { BuildingBlockId, FhirInspectorTab } from '../../data/techData';
 
-export type JourneyView = 'overview' | 'map' | 'personas' | 'walkthrough';
+export type JourneyView = 'overview' | 'map' | 'personas' | 'walkthrough' | 'how';
 
 interface Props {
   view: JourneyView;
@@ -18,6 +20,7 @@ interface Props {
   onChangePersona: (id: PersonaId) => void;
   onOpenScreen: (screenId: ScreenId) => void;
   showFacilitatorNotes: boolean;
+  onInspectFhir: (tab: FhirInspectorTab) => void;
 }
 
 const VIEWS: { id: JourneyView; label: string; hint: string; Icon: typeof Map }[] = [
@@ -25,6 +28,7 @@ const VIEWS: { id: JourneyView; label: string; hint: string; Icon: typeof Map }[
   { id: 'walkthrough', label: 'Walkthrough', hint: 'Present one moment at a time', Icon: Presentation },
   { id: 'map', label: 'Journey map', hint: 'Everyone, every step', Icon: Map },
   { id: 'personas', label: 'Persona lens', hint: 'One person end-to-end', Icon: User },
+  { id: 'how', label: 'How it works', hint: 'Standards & tools behind each moment', Icon: Cpu },
 ];
 
 export const UserJourneys: React.FC<Props> = ({
@@ -36,7 +40,14 @@ export const UserJourneys: React.FC<Props> = ({
   onChangePersona,
   onOpenScreen,
   showFacilitatorNotes,
+  onInspectFhir,
 }) => {
+  const [selectedBlock, setSelectedBlock] = useState<BuildingBlockId | null>('gdhcn');
+  const openBlock = (id: BuildingBlockId) => {
+    setSelectedBlock(id);
+    onChangeView('how');
+  };
+
   const present = (i: number) => {
     onChangeStep(i);
     onChangeView('walkthrough');
@@ -77,7 +88,13 @@ export const UserJourneys: React.FC<Props> = ({
           />
         )}
         {view === 'map' && (
-          <JourneyMap selectedStep={stepIndex} onSelectStep={onChangeStep} onPresentStep={present} onOpenScreen={onOpenScreen} />
+          <JourneyMap
+            selectedStep={stepIndex}
+            onSelectStep={onChangeStep}
+            onPresentStep={present}
+            onOpenScreen={onOpenScreen}
+            onOpenBlock={openBlock}
+          />
         )}
         {view === 'personas' && (
           <PersonaLens personaId={personaId} onSelectPersona={onChangePersona} onPresentStep={present} />
@@ -88,7 +105,12 @@ export const UserJourneys: React.FC<Props> = ({
             onChangeStep={onChangeStep}
             onOpenScreen={onOpenScreen}
             showFacilitatorNotes={showFacilitatorNotes}
+            onOpenBlock={openBlock}
+            onInspectFhir={onInspectFhir}
           />
+        )}
+        {view === 'how' && (
+          <HowItWorks selectedBlock={selectedBlock} onSelectBlock={setSelectedBlock} onPresentStep={present} />
         )}
       </div>
     </div>

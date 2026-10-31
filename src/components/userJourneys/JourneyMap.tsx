@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowRight, Play, Smartphone, AlertTriangle, Sparkles, Package, ArrowRightLeft } from 'lucide-react';
+import { ArrowRight, Play, Smartphone, AlertTriangle, Sparkles, Package, ArrowRightLeft, Cpu, WifiOff, Wifi } from 'lucide-react';
+import { ARCH_LAYERS, BLOCK_BY_ID, BuildingBlockId, STEP_TECH } from '../../data/techData';
 import { ScreenId } from '../../types';
 import { CHAPTERS, JOURNEY_STEPS, PERSONAS, PersonaId, RECORD_TRUST_LADDER } from '../../data/journeyData';
 import { EmotionBadge, PersonaAvatar, TrustMeter, countryChip } from './shared';
@@ -9,6 +10,7 @@ interface Props {
   onSelectStep: (index: number) => void;
   onPresentStep: (index: number) => void;
   onOpenScreen: (screenId: ScreenId) => void;
+  onOpenBlock: (id: BuildingBlockId) => void;
 }
 
 const LABEL_COL = 168;
@@ -20,7 +22,8 @@ const RowLabel: React.FC<{ children: React.ReactNode; className?: string }> = ({
   </div>
 );
 
-export const JourneyMap: React.FC<Props> = ({ selectedStep, onSelectStep, onPresentStep, onOpenScreen }) => {
+export const JourneyMap: React.FC<Props> = ({ selectedStep, onSelectStep, onPresentStep, onOpenScreen, onOpenBlock }) => {
+  const [showTech, setShowTech] = useState(true);
   const [focusPersona, setFocusPersona] = useState<PersonaId | null>(null);
   const [showFriction, setShowFriction] = useState(true);
 
@@ -67,6 +70,10 @@ export const JourneyMap: React.FC<Props> = ({ selectedStep, onSelectStep, onPres
           <label className="flex items-center gap-1.5 ml-2 text-slate-600 cursor-pointer">
             <input type="checkbox" checked={showFriction} onChange={(e) => setShowFriction(e.target.checked)} />
             Pain points & enablers
+          </label>
+          <label className="flex items-center gap-1.5 text-slate-600 cursor-pointer">
+            <input type="checkbox" checked={showTech} onChange={(e) => setShowTech(e.target.checked)} />
+            Technical layer
           </label>
         </div>
       </div>
@@ -203,6 +210,77 @@ export const JourneyMap: React.FC<Props> = ({ selectedStep, onSelectStep, onPres
                   <p className="text-[11px] text-sky-950 leading-snug">{s.enabler}</p>
                 </div>
               ))}
+            </>
+          )}
+
+          {showTech && (
+            <>
+              <div className="sticky left-0 z-10 bg-slate-900 text-white border-r p-2.5 flex items-center gap-2">
+                <Cpu className="w-4 h-4 text-sky-300" />
+                <span className="font-bold text-[12px]">Under the hood</span>
+              </div>
+              <div style={{ gridColumn: `span ${JOURNEY_STEPS.length}` }} className="bg-slate-900 text-slate-400 text-[10px] px-3 flex items-center">
+                The standards and tools that make each moment possible. Click a chip to see where else it is used.
+              </div>
+
+              {ARCH_LAYERS.map((layer) => (
+                <React.Fragment key={layer.id}>
+                  <RowLabel className={`${layer.className.soft} border-r-slate-200 border-b border-b-slate-100`}>
+                    <span className={`w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0 ${layer.className.dot}`} />
+                    <div>
+                      <div className={`font-bold text-[12px] ${layer.className.text}`}>{layer.label}</div>
+                      <div className="text-[10px] text-slate-500 leading-tight">{layer.question}</div>
+                    </div>
+                  </RowLabel>
+                  {JOURNEY_STEPS.map((s, i) => {
+                    const blocks = (STEP_TECH[s.stageCode]?.blocks ?? []).filter((b) => BLOCK_BY_ID[b.id].layer === layer.id);
+                    return (
+                      <div key={s.stageCode} onClick={() => onSelectStep(i)} className={`${colClass(i)} p-2 border-l border-b border-slate-100 flex flex-wrap content-start gap-1`}>
+                        {blocks.map((b) => (
+                          <button
+                            key={b.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOpenBlock(b.id);
+                            }}
+                            title={b.role}
+                            className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${layer.className.border} ${layer.className.soft} ${layer.className.text} hover:shadow-sm`}
+                          >
+                            {BLOCK_BY_ID[b.id].short}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </React.Fragment>
+              ))}
+
+              <RowLabel className="bg-white border-r-slate-200 border-b border-b-slate-100">
+                <ArrowRightLeft className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-bold text-slate-900 text-[12px]">Data on the move</div>
+                  <div className="text-[10px] text-slate-500 leading-tight">From → to, and how</div>
+                </div>
+              </RowLabel>
+              {JOURNEY_STEPS.map((s, i) => {
+                const ex = STEP_TECH[s.stageCode]?.exchange;
+                return (
+                  <div key={s.stageCode} onClick={() => onSelectStep(i)} className={`${colClass(i)} p-2.5 border-l border-b border-slate-100 space-y-1`}>
+                    {ex && (
+                      <>
+                        <div className="text-[11px] font-semibold text-slate-800 leading-snug">
+                          {ex.from} → {ex.to}
+                        </div>
+                        <div className="text-[10px] text-slate-500 leading-snug">{ex.carrier}</div>
+                        <span className={`inline-flex items-center gap-1 text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${ex.online ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                          {ex.online ? <Wifi className="w-2.5 h-2.5" /> : <WifiOff className="w-2.5 h-2.5" />}
+                          {ex.online ? 'Online' : 'Offline'}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
             </>
           )}
 
