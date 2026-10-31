@@ -34,6 +34,7 @@ export type BuildingBlockId =
   | 'ohs-fhir-sdk'
   | 'ohs-sdc'
   | 'ohs-info-gateway'
+  | 'ohs-data-pipes'
   | 'national-fhir'
   | 'family-wallet'
   | 'vhl-viewer'
@@ -72,11 +73,11 @@ export const BUILDING_BLOCKS: BuildingBlock[] = [
   },
   {
     id: 'ohs-fhir-sdk',
-    name: 'OHS Android FHIR SDK (FHIR Engine)',
-    short: 'Android FHIR SDK',
+    name: 'OHS FHIR SDK (FHIR Engine)',
+    short: 'OHS FHIR SDK',
     layer: 'apps',
     owner: 'Open Health Stack (open source)',
-    what: 'An open-source library for building Android apps that store FHIR data on the device, work fully offline and sync later.',
+    what: 'An open-source, multiplatform library for building apps that store FHIR data on the device, work fully offline and sync later.',
     soWhat: 'The CHW phone, clinic tablet and family wallet are all built on the same open building block, so data is FHIR from the first tap. No conversion step, no vendor lock-in.',
   },
   {
@@ -85,17 +86,17 @@ export const BUILDING_BLOCKS: BuildingBlock[] = [
     short: 'SDC library',
     layer: 'apps',
     owner: 'Open Health Stack (open source)',
-    what: 'Renders FHIR Questionnaires as forms on Android and turns the answers into FHIR resources (extraction).',
+    what: 'Renders FHIR Questionnaires as forms on the device and turns the answers into FHIR resources (extraction).',
     soWhat: 'The Ministry can change a registration form by publishing a new Questionnaire, without rebuilding the app.',
   },
   {
     id: 'ohs-info-gateway',
     name: 'OHS FHIR Info Gateway',
-    short: 'Info Gateway',
+    short: 'Info Gateway (AuthZ)',
     layer: 'apps',
     owner: 'Open Health Stack (open source)',
-    what: 'An access-control layer in front of the national FHIR server. It checks who is asking and what they are allowed to see, and records every access.',
-    soWhat: 'Lao PDR keeps the records at home and controls every request, including ones that come from abroad.',
+    what: 'The authorization (AuthZ) layer in front of the national FHIR server. It checks the caller’s access token from the identity provider, applies access rules (role, facility, household, consent) to every request, and records each access.',
+    soWhat: 'Every app, from the CHW phone to the Thai clinic viewer, goes through one front door. Lao PDR keeps the records at home and decides who can read or write what, including requests from abroad.',
   },
   {
     id: 'national-fhir',
@@ -105,6 +106,15 @@ export const BUILDING_BLOCKS: BuildingBlock[] = [
     owner: 'Lao PDR MOH',
     what: 'The national store of immunization and health summary data, using the FHIR standard API.',
     soWhat: 'It is the one source of truth that the family wallet, clinics and VHL links all point back to.',
+  },
+  {
+    id: 'ohs-data-pipes',
+    name: 'OHS FHIR Data Pipes (analytics)',
+    short: 'FHIR Data Pipes',
+    layer: 'apps',
+    owner: 'Open Health Stack (open source)',
+    what: 'Open-source pipelines that copy FHIR data from the national server, including Provenance and AuditEvent, into analytics-ready tables for reports and dashboards.',
+    soWhat: 'The Ministry sees patterns, not just single records: how many foreign certificates were verified, how often records are opened abroad, and any unusual access.',
   },
   {
     id: 'family-wallet',
@@ -301,7 +311,7 @@ export const STEP_TECH: Record<string, StepTech> = {
       { id: 'dvc', role: 'QR decoded (CBOR) but signature not checked' },
       { id: 'fhir-r4', role: 'Immunization.primarySource = false; ServiceRequest for referral' },
       { id: 'smart-imm', role: 'PreQual codes kept, but not yet mapped to the Lao schedule' },
-      { id: 'ohs-info-gateway', role: 'Authorizes the CHW’s sync to the national server once she has signal' },
+      { id: 'ohs-info-gateway', role: 'On sync, checks the CHW’s token and only lets her write to households in her own catchment' },
     ],
     exchange: {
       from: 'Paper card',
@@ -319,6 +329,7 @@ export const STEP_TECH: Record<string, StepTech> = {
     soWhat: 'The clinic checks Thailand’s signature against WHO’s trust list, stored locally. One check turns a foreign paper card into trusted clinical data, with no call to Thailand.',
     blocks: [
       { id: 'ohs-fhir-sdk', role: 'Clinic tablet app; caches the trust list' },
+      { id: 'ohs-info-gateway', role: 'Delivers the CHW’s referral to this clinic; the nurse can only see patients referred to her facility' },
       { id: 'gdhcn', role: 'Supplies Thailand’s public key (downloaded in advance)' },
       { id: 'dvc', role: 'COSE_Sign1 signature verified (ES256)' },
       { id: 'provenance', role: 'Records that Thailand authored and Lao PDR verified the doses' },
@@ -342,7 +353,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       { id: 'conceptmap', role: 'PreQual product → WHO vaccine type → Lao EPI code' },
       { id: 'plandefinition', role: 'Lao schedule logic calculates the 6-week doses' },
       { id: 'ohs-fhir-sdk', role: 'Saves dual-coded record and syncs it to the national server' },
-      { id: 'ohs-info-gateway', role: 'Checks the clinic’s permissions before accepting the update' },
+      { id: 'ohs-info-gateway', role: 'Checks the nurse’s role and facility before accepting the update' },
+      { id: 'ohs-data-pipes', role: 'Verified Thai doses, with their Provenance, count toward Lao coverage reports' },
       { id: 'national-fhir', role: 'Receives the verified, mapped record' },
     ],
     exchange: {
@@ -385,7 +397,7 @@ export const STEP_TECH: Record<string, StepTech> = {
       { id: 'family-wallet', role: 'Generates the link and passcode' },
       { id: 'vhl', role: 'Signed QR holding a manifest URL + decryption key' },
       { id: 'pcf', role: '14-day, passcode-protected sharing consent' },
-      { id: 'ohs-info-gateway', role: 'Will enforce the consent when the link is used' },
+      { id: 'ohs-info-gateway', role: 'Registers the consent it will enforce when the link is used' },
     ],
     exchange: {
       from: 'Family wallet',
@@ -404,9 +416,10 @@ export const STEP_TECH: Record<string, StepTech> = {
     blocks: [
       { id: 'vhl-viewer', role: 'Scans QR, takes passcode, displays IPS' },
       { id: 'vhl', role: 'Manifest fetched; decryption key used' },
-      { id: 'ohs-info-gateway', role: 'Checks passcode + consent, releases data, logs access' },
+      { id: 'ohs-info-gateway', role: 'Authorizes the request against passcode and consent, releases data, writes the AuditEvent' },
       { id: 'ips', role: 'Rendered for the Thai clinician' },
       { id: 'audit', role: 'AuditEvent recorded in Lao PDR' },
+      { id: 'ohs-data-pipes', role: 'Feeds AuditEvents into a Ministry dashboard of cross-border access, so unusual access stands out' },
     ],
     exchange: {
       from: 'Lao national server',

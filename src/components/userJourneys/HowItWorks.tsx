@@ -31,8 +31,8 @@ const BIG_IDEAS = [
   },
   {
     title: 'Open tools, offline first',
-    body: 'Open Health Stack building blocks give every frontline app offline FHIR storage and configurable forms out of the box.',
-    blocks: ['ohs-fhir-sdk', 'ohs-sdc', 'ohs-info-gateway'] as BuildingBlockId[],
+    body: 'Open Health Stack gives every app offline FHIR storage and configurable forms, one secure front door to the national server, and analytics on top.',
+    blocks: ['ohs-fhir-sdk', 'ohs-sdc', 'ohs-info-gateway', 'ohs-data-pipes'] as BuildingBlockId[],
   },
 ];
 
