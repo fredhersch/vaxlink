@@ -21,12 +21,21 @@ import { InteractiveJourneyFlow } from './components/journeyFlow/InteractiveJour
 import { WorkshopGuide } from './components/workshopGuide/WorkshopGuide';
 import { UserJourneys, JourneyView } from './components/userJourneys/UserJourneys';
 import { JOURNEY_STEPS, PersonaId } from './data/journeyData';
+import { FhirInspectorTab } from './data/techData';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('journeys');
   const [journeyView, setJourneyView] = useState<JourneyView>('overview');
   const [journeyStepIndex, setJourneyStepIndex] = useState<number>(0);
   const [journeyPersona, setJourneyPersona] = useState<PersonaId>('khamla');
+  const [fhirFocusTab, setFhirFocusTab] = useState<FhirInspectorTab | null>(null);
+
+  const inspectFhir = (tab: FhirInspectorTab) => {
+    // Reset first so clicking the same resource twice still re-focuses it.
+    setFhirFocusTab(null);
+    setTimeout(() => setFhirFocusTab(tab), 0);
+    setIsFhirDrawerOpen(true);
+  };
   const [currentScreenId, setCurrentScreenId] = useState<ScreenId>('S1');
   const [isFramed, setIsFramed] = useState<boolean>(true);
   const [isFhirDrawerOpen, setIsFhirDrawerOpen] = useState<boolean>(false);
@@ -147,6 +156,8 @@ export function App() {
               {activeTab === 'journeys' &&
                 (journeyView === 'walkthrough'
                   ? `Moment ${JOURNEY_STEPS[journeyStepIndex].stageCode} — ${JOURNEY_STEPS[journeyStepIndex].facilitatorCue}`
+                  : journeyView === 'how'
+                  ? 'Use this when the room asks "how?": start from a big idea, then show which moments in the journey depend on it.'
                   : 'Lead with people, not screens: introduce the cast, walk the four moments, then drop into a screen only when the room asks "what does that look like?"')}
               {activeTab === 'storyboard' && 'Screen S0 provides a 5-column birds-eye view for plenary presentations & workshop context.'}
               {activeTab === 'screens' && `Stage ${currentStageMetadata.stageCode} (${currentStageMetadata.title}) — ${currentStageMetadata.learningObjective}`}
@@ -177,6 +188,7 @@ export function App() {
             onChangePersona={setJourneyPersona}
             onOpenScreen={openScreenFromJourney}
             showFacilitatorNotes={isPresenterMode}
+            onInspectFhir={inspectFhir}
           />
         )}
 
@@ -264,6 +276,7 @@ export function App() {
         currentStageCode={activeTab === 'screens' ? currentStageMetadata.stageCode : 'Master'}
         isOpen={isFhirDrawerOpen}
         onToggle={() => setIsFhirDrawerOpen(!isFhirDrawerOpen)}
+        focusTab={fhirFocusTab}
       />
     </div>
   );

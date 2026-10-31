@@ -16,7 +16,9 @@ This application illustrates a multi-stage cross-border immunization and continu
    - **Journey map:** a swimlane of every persona across all 8 moments, with emotion, record state, pain points, enablers and hand-offs. Focus on one persona to dim the rest.
    - **Persona lens:** one person's goals, needs, frustrations, emotion curve and touchpoints end to end.
    - Every moment links to the matching device screen (S1–S8), and the screens link back to the journey.
-   - Content lives in `src/data/journeyData.ts`, so you can edit the narrative without touching components.
+   - **Under the hood (technical layer):** every moment has a technical so-what plus the tools & apps (OHS FHIR SDK, SDC library, Info Gateway as the AuthZ layer, FHIR Data Pipes for analytics, family wallet, VHL viewer), data standards (FHIR R4, WHO SMART Immunizations, IPS, ConceptMap, PlanDefinition, Provenance) and trust & exchange (WHO DVC, GDHCN, IHE VHL, IHE PCF, AuditEvent) it depends on. It also shows the data hand-off (online or offline) and the FHIR resources it changes, with "Inspect JSON" links into the payload drawer. This appears in the walkthrough (press T to toggle) and as extra rows in the journey map.
+   - **How it works:** four big ideas (same language, trust without phoning home, share without copying, open offline-first tools) and a building-block × moment matrix. Pick a standard or tool to see what it is, why it matters for the journey, and every moment it makes possible.
+   - Content lives in `src/data/journeyData.ts` (people & moments) and `src/data/techData.ts` (standards, tools & per-moment technical layer), so you can edit the narrative without touching components.
 
 1. **S0: Master End-to-End Storyboard Canvas**
    - 5-column horizontal visual flow (J1 → J4.1)
