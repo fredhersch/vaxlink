@@ -78,7 +78,7 @@ export const S4_ClinicVerification: React.FC<S4Props> = ({ onNext }) => {
                   Age: 4 Weeks (T0+4w)
                 </span>
                 <span className="bg-amber-900/60 text-amber-300 px-2 py-0.5 rounded text-[11px] border border-amber-700">
-                  Referred by CHW Soukanh
+                  Referred by CHW Vilay
                 </span>
               </div>
             </div>

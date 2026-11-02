@@ -27,7 +27,7 @@ The site leads with **people and moments**. The technical layer (standards, tool
 | 3 | **Made official** | +4 weeks | District Health Center, Lao PDR | A nurse verifies the signature, then maps the Thai vaccines to the Lao schedule |
 | 4 | **Crossing back** | +12 months | Lao PDR → Thailand | Dad shares a passcode-protected link; a Thai doctor views the full history; the access is logged in Lao PDR |
 
-**The cast:** Khamla (mother), Bounmy (father, holds the family phone), Soukanh (community health worker), Nurse Chanthasone (district health center) and Dr. Somchai (Thai clinician).
+**The cast:** Khamla (mother), Bounmy (father, holds the family phone), Vilay (community health worker), Nurse Chanthasone (district health center) and Dr. Anan (Thai clinician).
 
 ---
 

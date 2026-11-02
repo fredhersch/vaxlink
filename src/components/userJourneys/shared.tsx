@@ -91,7 +91,7 @@ export const ExtLink: React.FC<{ href: string; children: React.ReactNode; classN
   </a>
 );
 
-// Longest names first, so "Dr. Somchai" wins over a shorter match.
+// Longest names first, so "Dr. Anan" wins over a shorter match.
 const NAME_PATTERNS = PERSONAS.map((p) => ({ p, name: p.name }))
   .sort((a, b) => b.name.length - a.name.length);
 const NAME_RE = new RegExp(`(${NAME_PATTERNS.map((n) => n.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');

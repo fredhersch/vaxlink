@@ -41,7 +41,7 @@ export const S2_ChwRegistration: React.FC<S2Props> = ({ onNext }) => {
               Lao PDR Community Health
             </h2>
             <div className="text-[10px] text-clinical-steel">
-              Catchment Village 04 &bull; CHW: Soukanh
+              Catchment Village 04 &bull; CHW: Vilay
             </div>
           </div>
           <div className="flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium">

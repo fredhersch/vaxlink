@@ -9,7 +9,7 @@ import {
 } from '../../data/journeyData';
 import { ExtLink, PersonaAvatar, PersonaText, countryChip, trustColor } from './shared';
 import { MomentIllustration } from './MomentIllustration';
-import { PeopleScene } from './PeopleScene';
+import { MomentPicture } from './MomentPicture';
 import { IG } from '../../data/links';
 
 interface Props {
@@ -84,7 +84,7 @@ export const JourneyOverview: React.FC<Props> = ({ onStartWalkthrough, onOpenPer
                 </div>
                 <p className="text-xs text-slate-700 leading-relaxed">{ch.summary}</p>
                 <div className="mt-3 space-y-2">
-                  <PeopleScene chapterId={ch.id} className="rounded-xl border border-slate-200" />
+                  <MomentPicture chapterId={ch.id} />
                   <MomentIllustration chapterId={ch.id} />
                 </div>
                 <div className="flex -space-x-1.5 mt-4">

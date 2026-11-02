@@ -68,7 +68,7 @@ export const S8_ForeignClinicViewer: React.FC<S8Props> = ({ onRestart, onOpenFhi
               Thailand Clinic Point-of-Care VHL Viewer (Country A)
             </h2>
             <div className="flex items-center gap-2 text-xs text-clinical-steel mt-0.5">
-              <span>Practitioner: <strong>Dr. Somchai</strong> &bull; Chiang Rai Primary Care Clinic</span>
+              <span>Practitioner: <strong>Dr. Anan</strong> &bull; Chiang Rai Primary Care Clinic</span>
               <span>&bull;</span>
               <span className="font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-medium">
                 VHL Manifest Verified via GDHCN Trust List

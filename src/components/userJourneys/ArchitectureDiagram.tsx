@@ -75,7 +75,7 @@ const LAYERS: Layer[] = [
     la: [
       { ra: RA.clientRegistry, name: 'Child + household', stages: 'J2', href: IG.profile('TrustDemoLaoPatient') },
       { ra: RA.facilityRegistry, name: 'Clinics and health centres', stages: 'J2, J3', href: IG.example('Organization', 'TrustDemoVientianeDhc') },
-      { ra: RA.workforceRegistry, name: 'CHWs and nurses', stages: 'J2, J3', href: IG.example('Practitioner', 'TrustDemoSoukanh') },
+      { ra: RA.workforceRegistry, name: 'CHWs and nurses', stages: 'J2, J3', href: IG.example('Practitioner', 'TrustDemoVilay') },
       { ra: RA.lhr, name: 'National FHIR server', stages: 'J3, J4', href: IG.example('Bundle', 'TrustDemoJ4Ips') },
     ],
   },

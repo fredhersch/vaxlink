@@ -1,6 +1,11 @@
 {
   "resourceType": "AuditEvent",
   "id": "TrustDemoJ41Access",
+  "meta": {
+    "profile": [
+      "http://smart.who.int/trust-demo/StructureDefinition/TrustDemoLaoVhlAccess"
+    ]
+  },
   "category": [
     {
       "coding": [
