@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Building, Lightbulb, Info, Workflow } from 'lucide-react';
 import { CHAPTERS, JOURNEY_STEPS } from '../../data/journeyData';
 import { ARCH_LAYERS, BLOCK_BY_ID, BLOCK_LINKS, BUILDING_BLOCKS, BuildingBlockId, STEP_TECH } from '../../data/techData';
-import { BPMN_PROCESSES, IG, bpmnSvg } from '../../data/links';
+import { BPMN_PROCESSES, IG, bpmnLinks, bpmnSvg } from '../../data/links';
 import { ArchitectureDiagram } from './ArchitectureDiagram';
 import { ExtLink } from './shared';
 import { stepHref } from '../../routes';
@@ -267,7 +267,13 @@ export const HowItWorks: React.FC<Props> = ({ selectedBlock, onSelectBlock, onPr
                   ))}
                 </span>
               </figcaption>
-              <a href={bpmnSvg(p.file)} target="_blank" rel="noopener noreferrer" className="block overflow-x-auto">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+                <ExtLink href={bpmnLinks(p).ig}>In the IG</ExtLink>
+                <ExtLink href={bpmnLinks(p).viewer}>Process viewer</ExtLink>
+                <ExtLink href={bpmnLinks(p).scenario}>User scenario</ExtLink>
+                <ExtLink href={bpmnLinks(p).source}>BPMN source</ExtLink>
+              </div>
+              <a href={bpmnLinks(p).ig} target="_blank" rel="noopener noreferrer" title="Open this process in the IG" className="block overflow-x-auto">
                 <img src={bpmnSvg(p.file)} alt={`BPMN diagram: ${p.title}`} className="max-w-none h-48 w-auto" loading="lazy" />
               </a>
             </figure>

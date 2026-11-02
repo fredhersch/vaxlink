@@ -2,8 +2,8 @@ import React from 'react';
 import { Cpu, ArrowRight, Wifi, WifiOff, FileJson, Lightbulb, Users, Workflow } from 'lucide-react';
 import { ARCH_LAYERS, BLOCK_BY_ID, BuildingBlockId, FhirInspectorTab, STEP_TECH } from '../../data/techData';
 import { JourneyStep, PERSONA_BY_ID } from '../../data/journeyData';
-import { BPMN_FOR_STAGE, IG, bpmnSvg } from '../../data/links';
-import { ExtLink, PersonaText } from './shared';
+import { BPMN_FOR_STAGE, IG, bpmnLinks, bpmnSvg } from '../../data/links';
+import { ExtLink, PersonaText, countryChip } from './shared';
 
 interface Props {
   step: JourneyStep;
@@ -119,28 +119,41 @@ export const TechLayerPanel: React.FC<Props> = ({ step, onOpenBlock, onInspectFh
 
           {/* FHIR changes */}
           <div className="rounded-xl border border-slate-200 p-4 space-y-2">
-            <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">FHIR resources created or changed</div>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">FHIR resources created or changed</div>
+              <ExtLink href={IG.profiles} className="text-[10px]">Thai and Lao profiles in the IG</ExtLink>
+            </div>
             <ul className="space-y-1.5">
               {tech.fhir.map((f) => (
-                <li key={f.resource} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
-                  <FileJson className="w-3.5 h-3.5 text-sky-600 flex-shrink-0" />
-                  {f.spec ? (
-                    <ExtLink href={f.spec} className="font-mono font-semibold">{f.resource}</ExtLink>
-                  ) : (
-                    <span className="font-mono font-semibold text-slate-900">{f.resource}</span>
-                  )}
-                  <span className="text-slate-600 order-last basis-full pl-5 sm:order-none sm:basis-auto sm:pl-0 sm:flex-1 min-w-0">{f.change}</span>
-                  {f.example && (
-                    <ExtLink href={f.example} className="text-[10px] font-semibold flex-shrink-0">IG example</ExtLink>
-                  )}
-                  {f.inspect && (
-                    <button
-                      onClick={() => onInspectFhir(f.inspect!)}
-                      className="text-[10px] font-semibold text-sky-700 hover:underline flex-shrink-0"
-                    >
-                      Inspect JSON
-                    </button>
-                  )}
+                <li key={f.resource} className="text-xs border-b border-slate-100 last:border-0 pb-1.5">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <FileJson className="w-3.5 h-3.5 text-sky-600 flex-shrink-0" />
+                    {f.profile ? (
+                      <ExtLink href={IG.profile(f.profile.id)} className="font-mono font-semibold">{f.resource}</ExtLink>
+                    ) : (
+                      <span className="font-mono font-semibold text-slate-900">{f.resource}</span>
+                    )}
+                    {f.profile && (
+                      <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${countryChip(f.profile.country)}`} title={`${f.profile.country} profile in the IG`}>
+                        {f.profile.country === 'Thailand' ? 'TH' : 'LA'} profile
+                      </span>
+                    )}
+                    <span className="text-slate-600 flex-1 min-w-[8rem]">{f.change}</span>
+                    {f.inspect && (
+                      <button onClick={() => onInspectFhir(f.inspect!)} className="text-[10px] font-semibold text-sky-700 hover:underline flex-shrink-0">
+                        Inspect JSON
+                      </button>
+                    )}
+                  </div>
+                  {f.why && <p className="pl-5 text-[11px] text-slate-500 leading-snug mt-0.5">{f.why}</p>}
+                  <div className="pl-5 flex flex-wrap gap-x-2.5 gap-y-0.5 text-[10px] mt-0.5">
+                    {f.examples?.map((e) => (
+                      <ExtLink key={e.url} href={e.url}>{e.label}</ExtLink>
+                    ))}
+                    {f.spec && (
+                      <ExtLink href={f.spec} className="!text-slate-500">base standard</ExtLink>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
@@ -154,9 +167,14 @@ export const TechLayerPanel: React.FC<Props> = ({ step, onOpenBlock, onInspectFh
               <Workflow className="w-4 h-4 text-slate-600" />
               <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Business process (BPMN)</div>
               <span className="text-xs text-slate-600">{bpmn.title}</span>
-              <ExtLink href={IG.processes} className="text-[11px] ml-auto">All processes in the IG</ExtLink>
             </div>
-            <a href={bpmnSvg(bpmn.file)} target="_blank" rel="noopener noreferrer" className="block overflow-x-auto rounded-lg bg-white border border-slate-100">
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+              <ExtLink href={bpmnLinks(bpmn).ig}>Process in the IG</ExtLink>
+              <ExtLink href={bpmnLinks(bpmn).viewer}>Process viewer (tasks and skills)</ExtLink>
+              <ExtLink href={bpmnLinks(bpmn).scenario}>User scenario in the IG</ExtLink>
+              <ExtLink href={bpmnLinks(bpmn).source}>BPMN source</ExtLink>
+            </div>
+            <a href={bpmnLinks(bpmn).ig} target="_blank" rel="noopener noreferrer" title="Open this process in the IG" className="block overflow-x-auto rounded-lg bg-white border border-slate-100">
               <img src={bpmnSvg(bpmn.file)} alt={`BPMN diagram: ${bpmn.title}`} className="max-w-none h-56 md:h-64 w-auto" loading="lazy" />
             </a>
           </div>
