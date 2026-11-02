@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { ArrowRight, Play, Smartphone, AlertTriangle, Sparkles, Package, ArrowRightLeft, Cpu, WifiOff, Wifi } from 'lucide-react';
+import { ArrowRight, Workflow, Play, Smartphone, AlertTriangle, Sparkles, Package, ArrowRightLeft, Cpu, WifiOff, Wifi } from 'lucide-react';
 import { ARCH_LAYERS, BLOCK_BY_ID, BuildingBlockId, STEP_TECH } from '../../data/techData';
 import { ScreenId } from '../../types';
 import { CHAPTERS, JOURNEY_STEPS, PERSONAS, PersonaId, RECORD_TRUST_LADDER } from '../../data/journeyData';
 import { EmotionBadge, PersonaAvatar, TrustMeter, countryChip } from './shared';
 import { MomentIllustration } from './MomentIllustration';
 import { stepHref } from '../../routes';
+import { BPMN_FOR_STAGE, bpmnLinks, bpmnSvg } from '../../data/links';
+import { ExtLink } from './shared';
 
 interface Props {
   selectedStep: number;
@@ -303,6 +305,36 @@ export const JourneyMap: React.FC<Props> = ({ selectedStep, onSelectStep, onPres
               <p className="text-[11px] text-slate-700 leading-snug">{s.handoff}</p>
             </div>
           ))}
+
+          {/* Business process row: the IG's BPMN behind each step */}
+          <RowLabel className="bg-white border-r-slate-200 border-t border-t-slate-100">
+            <Workflow className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <div className="font-bold text-slate-900 text-[12px]">Business process</div>
+              <div className="text-[10px] text-slate-500 leading-tight">The BPMN in the IG</div>
+            </div>
+          </RowLabel>
+          {JOURNEY_STEPS.map((s, i) => {
+            const b = BPMN_FOR_STAGE[s.stageCode];
+            const l = b && bpmnLinks(b);
+            return (
+              <div key={s.stageCode} onClick={() => onSelectStep(i)} className={`${colClass(i)} p-2 border-l border-t border-slate-100`}>
+                {b && l && (
+                  <div className="rounded-lg border border-slate-200 bg-white p-1.5 space-y-1 shadow-sm">
+                    <a href={l.ig} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} title={`Open “${b.title}” in the IG`} className="block h-20 overflow-hidden rounded bg-slate-50 border border-slate-100">
+                      <img src={bpmnSvg(b.file)} alt={`BPMN diagram: ${b.title}`} className="w-full h-full object-cover object-left-top" loading="lazy" />
+                    </a>
+                    <div className="text-[10px] font-semibold text-slate-800 leading-snug">{b.title}</div>
+                    <div className="flex flex-wrap gap-x-2 text-[10px]" onClick={(e) => e.stopPropagation()}>
+                      <ExtLink href={l.ig}>IG</ExtLink>
+                      <ExtLink href={l.viewer}>Viewer</ExtLink>
+                      <ExtLink href={l.source}>BPMN</ExtLink>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
