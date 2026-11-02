@@ -1,0 +1,51 @@
+{
+  "resourceType": "Immunization",
+  "id": "TrustDemoJ3HepB",
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "code": "vp-hepb-peds-monovalent",
+        "system": "http://smart.who.int/trust-demo/CodeSystem/TrustDemoVaccineProduct",
+        "display": "Hepatitis B vaccine, paediatric, monovalent"
+      },
+      {
+        "code": "LAO-EPI-HEPB-BD",
+        "system": "http://smart.who.int/trust-demo/CodeSystem/TrustDemoLaoEpiSchedule",
+        "display": "Hepatitis B birth dose"
+      },
+      {
+        "code": "08",
+        "system": "http://hl7.org/fhir/sid/cvx",
+        "display": "Hep B, adolescent or pediatric"
+      }
+    ],
+    "text": "Hepatitis B paediatric birth dose"
+  },
+  "patient": {
+    "reference": "Patient/TrustDemoSomsack"
+  },
+  "occurrenceDateTime": "2025-10-28T09:15:00+07:00",
+  "primarySource": true,
+  "informationSource": {
+    "reference": {
+      "reference": "Organization/TrustDemoChiangRaiHospital"
+    }
+  },
+  "performer": [
+    {
+      "actor": {
+        "reference": "Practitioner/TrustDemoSomchai"
+      }
+    }
+  ],
+  "lotNumber": "TH-4821",
+  "location": {
+    "display": "Chiang Rai Provincial Hospital, Thailand"
+  },
+  "protocolApplied": [
+    {
+      "doseNumber": "1"
+    }
+  ]
+}
