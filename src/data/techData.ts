@@ -6,6 +6,8 @@
  * "how does that actually work?" without leaving the story.
  */
 
+import { IG, SPEC } from './links';
+
 export type ArchLayer = 'apps' | 'data' | 'trust';
 
 export const ARCH_LAYERS: { id: ArchLayer; label: string; question: string; className: { soft: string; border: string; text: string; dot: string } }[] = [
@@ -244,6 +246,63 @@ export const BLOCK_BY_ID: Record<BuildingBlockId, BuildingBlock> = BUILDING_BLOC
   {} as Record<BuildingBlockId, BuildingBlock>,
 );
 
+
+/** Light "read more" links for each building block: the standard first, then this journey's IG example. */
+export const BLOCK_LINKS: Record<BuildingBlockId, { label: string; url: string }[]> = {
+  'thai-his': [{ label: 'DVC issuing: WHO SMART Trust', url: SPEC.trust }],
+  'ohs-fhir-sdk': [{ label: 'OHS Android FHIR SDK', url: SPEC.ohsSdk }],
+  'ohs-sdc': [
+    { label: 'HL7 FHIR SDC', url: SPEC.sdc },
+    { label: 'FHIR Questionnaire', url: SPEC.questionnaire },
+    { label: 'This journey’s form (IG)', url: IG.example('Questionnaire', 'TrustDemoHouseholdRegistration') },
+  ],
+  'ohs-info-gateway': [{ label: 'OHS FHIR Info Gateway', url: SPEC.ohsGateway }],
+  'ohs-data-pipes': [{ label: 'OHS FHIR Data Pipes', url: SPEC.ohsPipes }],
+  'national-fhir': [{ label: 'HL7 FHIR', url: SPEC.fhir }],
+  'family-wallet': [{ label: 'IHE ITI VHL (Holder)', url: SPEC.vhl }],
+  'vhl-viewer': [{ label: 'IHE ITI VHL (Receiver)', url: SPEC.vhl }],
+  'fhir-r4': [
+    { label: 'HL7 FHIR R4', url: SPEC.fhirR4 },
+    { label: 'This journey as a FHIR IG', url: IG.site },
+  ],
+  'smart-imm': [{ label: 'WHO SMART Immunizations', url: SPEC.smartImm }],
+  ips: [
+    { label: 'HL7 IPS', url: SPEC.ips },
+    { label: 'Somsack’s IPS (IG)', url: IG.example('Bundle', 'TrustDemoJ4Ips') },
+  ],
+  conceptmap: [
+    { label: 'FHIR ConceptMap', url: SPEC.conceptMap },
+    { label: 'The map in this journey (IG)', url: IG.example('ConceptMap', 'TrustDemoProductToLaoEpi') },
+  ],
+  plandefinition: [
+    { label: 'FHIR PlanDefinition', url: SPEC.planDefinition },
+    { label: 'CQL', url: SPEC.cql },
+    { label: 'The schedule (IG)', url: IG.example('PlanDefinition', 'TrustDemoLaoInfantSchedule') },
+  ],
+  provenance: [
+    { label: 'FHIR Provenance', url: SPEC.provenance },
+    { label: 'Verification provenance (IG)', url: IG.example('Provenance', 'TrustDemoJ3Verification') },
+  ],
+  dvc: [
+    { label: 'WHO SMART Trust (HCERT)', url: SPEC.trust },
+    { label: 'HCERT QR code generation', url: SPEC.hcertQr },
+  ],
+  gdhcn: [
+    { label: 'WHO GDHCN', url: SPEC.gdhcn },
+    { label: 'WHO SMART Trust', url: SPEC.trust },
+  ],
+  vhl: [{ label: 'IHE ITI Verifiable Health Links', url: SPEC.vhl }],
+  pcf: [
+    { label: 'IHE Privacy Consent on FHIR', url: SPEC.pcf },
+    { label: 'Bounmy’s consent (IG)', url: IG.example('Consent', 'TrustDemoJ4Consent') },
+  ],
+  audit: [
+    { label: 'IHE BALP', url: SPEC.balp },
+    { label: 'FHIR AuditEvent', url: SPEC.auditEvent },
+    { label: 'The access log entry (IG)', url: IG.example('AuditEvent', 'TrustDemoJ41Access') },
+  ],
+};
+
 /** Keys of the FHIR inspector drawer tabs, so chips can deep-link into it. */
 export type FhirInspectorTab = 'patient' | 'immunization' | 'group' | 'serviceRequest' | 'provenance' | 'auditEvent' | 'cbor' | 'conceptMap';
 
@@ -261,7 +320,7 @@ export interface StepTech {
     online: boolean;
   };
   /** FHIR resources created or changed, optionally linked to the inspector. */
-  fhir: { resource: string; change: string; inspect?: FhirInspectorTab }[];
+  fhir: { resource: string; change: string; inspect?: FhirInspectorTab; spec?: string; example?: string }[];
 }
 
 export const STEP_TECH: Record<string, StepTech> = {
@@ -281,8 +340,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Immunization ×2', change: 'Created in the Thai system (Hep B, BCG)', inspect: 'immunization' },
-      { resource: 'DVC payload', change: 'Signed CBOR/COSE certificate', inspect: 'cbor' },
+      { resource: 'Immunization ×2', change: 'Created in the Thai system (Hep B, BCG)', inspect: 'immunization', spec: SPEC.immunization },
+      { resource: 'DVC payload', change: 'Signed CBOR/COSE certificate', inspect: 'cbor', spec: SPEC.trust },
     ],
   },
   'J2a': {
@@ -300,8 +359,9 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Patient', change: 'Created with a temporary Lao ID', inspect: 'patient' },
-      { resource: 'Group (household)', change: 'Somsack added as member', inspect: 'group' },
+      { resource: 'Patient', change: 'Created with a temporary Lao ID', inspect: 'patient', example: IG.example('Patient', 'TrustDemoSomsack') },
+      { resource: 'Group (household)', change: 'Somsack added as member', inspect: 'group', spec: SPEC.group, example: IG.example('Group', 'TrustDemoHousehold') },
+      { resource: 'QuestionnaireResponse', change: 'The registration form, answered offline (SDC)', spec: SPEC.sdc, example: IG.example('QuestionnaireResponse', 'TrustDemoJ2Registration') },
     ],
   },
   'J2b': {
@@ -321,8 +381,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Immunization ×2', change: 'Created as primarySource = false', inspect: 'immunization' },
-      { resource: 'ServiceRequest', change: 'Referral to District Health Center', inspect: 'serviceRequest' },
+      { resource: 'Immunization ×2', change: 'Created as primarySource = false', inspect: 'immunization', spec: SPEC.immunization, example: IG.example('Immunization', 'TrustDemoJ2HepBReported') },
+      { resource: 'ServiceRequest', change: 'Referral to District Health Center', inspect: 'serviceRequest', spec: SPEC.serviceRequest, example: IG.example('ServiceRequest', 'TrustDemoJ2Referral') },
     ],
   },
   'J3a': {
@@ -342,8 +402,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Immunization ×2', change: 'primarySource flipped to true', inspect: 'immunization' },
-      { resource: 'Provenance', change: 'Created: author = Thailand MOPH, verifier = nurse', inspect: 'provenance' },
+      { resource: 'Immunization ×2', change: 'primarySource flipped to true', inspect: 'immunization', spec: SPEC.immunization, example: IG.example('Immunization', 'TrustDemoJ3HepB') },
+      { resource: 'Provenance', change: 'Created: author = Thailand MOPH, verifier = nurse', inspect: 'provenance', spec: SPEC.provenance, example: IG.example('Provenance', 'TrustDemoJ3Verification') },
     ],
   },
   'J3b': {
@@ -365,9 +425,9 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Immunization.vaccineCode', change: 'Lao EPI code added; PreQual code kept', inspect: 'immunization' },
-      { resource: 'ConceptMap', change: 'Nurse’s mapping decision recorded', inspect: 'conceptMap' },
-      { resource: 'Task / Appointment', change: '6-week pentavalent booked' },
+      { resource: 'Immunization.vaccineCode', change: 'Lao EPI code added; PreQual code kept', inspect: 'immunization', example: IG.example('Immunization', 'TrustDemoJ3HepB') },
+      { resource: 'ConceptMap', change: 'Nurse’s mapping decision recorded', inspect: 'conceptMap', spec: SPEC.conceptMap, example: IG.example('ConceptMap', 'TrustDemoProductToLaoEpi') },
+      { resource: 'Task / Appointment', change: '6-week pentavalent booked', example: IG.example('Task', 'TrustDemoJ3Reminder') },
     ],
   },
   'J4.0a': {
@@ -387,8 +447,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Bundle (IPS)', change: 'Generated: 2 Thai + 4 Lao doses' },
-      { resource: 'Group (household)', change: 'Drives the profile switcher', inspect: 'group' },
+      { resource: 'Bundle (IPS)', change: 'Generated: 2 Thai + 4 Lao doses', spec: SPEC.ips, example: IG.example('Bundle', 'TrustDemoJ4Ips') },
+      { resource: 'Group (household)', change: 'Drives the profile switcher', inspect: 'group', example: IG.example('Group', 'TrustDemoHousehold') },
     ],
   },
   'J4.0b': {
@@ -407,8 +467,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Consent (IHE PCF)', change: 'Created: scope = IPS, expires in 14 days' },
-      { resource: 'VHL manifest', change: 'Signed pointer to encrypted IPS' },
+      { resource: 'Consent (IHE PCF)', change: 'Created: scope = IPS, expires in 14 days', spec: SPEC.pcf, example: IG.example('Consent', 'TrustDemoJ4Consent') },
+      { resource: 'VHL manifest', change: 'Signed pointer to encrypted IPS', spec: SPEC.vhl },
     ],
   },
   'J4.1': {
@@ -429,8 +489,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Bundle (IPS)', change: 'Read-only, not stored in Thailand' },
-      { resource: 'AuditEvent', change: 'Created at Lao Info Gateway', inspect: 'auditEvent' },
+      { resource: 'Bundle (IPS)', change: 'Read-only, not stored in Thailand', example: IG.example('Provenance', 'TrustDemoJ41Received') },
+      { resource: 'AuditEvent', change: 'Created at Lao Info Gateway', inspect: 'auditEvent', spec: SPEC.balp, example: IG.example('AuditEvent', 'TrustDemoJ41Access') },
     ],
   },
 };

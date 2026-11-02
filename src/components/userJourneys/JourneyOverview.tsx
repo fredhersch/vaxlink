@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Play, Users, Route, Package } from 'lucide-react';
+import { ArrowRight, Play, Users, Route, Package, BookOpen } from 'lucide-react';
 import {
   CHAPTERS,
   JOURNEY_STEPS,
@@ -7,7 +7,9 @@ import {
   PersonaId,
   RECORD_TRUST_LADDER,
 } from '../../data/journeyData';
-import { PersonaAvatar, countryChip, trustColor } from './shared';
+import { ExtLink, PersonaAvatar, PersonaText, countryChip, trustColor } from './shared';
+import { MomentIllustration } from './MomentIllustration';
+import { IG } from '../../data/links';
 
 interface Props {
   onStartWalkthrough: (stepIndex: number) => void;
@@ -31,7 +33,7 @@ export const JourneyOverview: React.FC<Props> = ({ onStartWalkthrough, onOpenPer
             every vaccine he has ever had — without a single record being copied across the border.
           </h2>
           <p className="text-sm text-slate-300 leading-relaxed">
-            Five people, four moments, twelve months. Follow the people first; the technology is what makes each
+            A baby and five people around him, four moments, twelve months. Follow the people first; the technology is what makes each
             hand-off possible.
           </p>
           <div className="flex flex-wrap gap-2 pt-2">
@@ -80,6 +82,9 @@ export const JourneyOverview: React.FC<Props> = ({ onStartWalkthrough, onOpenPer
                   {ch.when} · {ch.where}
                 </div>
                 <p className="text-xs text-slate-700 leading-relaxed">{ch.summary}</p>
+                <div className="mt-3">
+                  <MomentIllustration chapterId={ch.id} />
+                </div>
                 <div className="flex -space-x-1.5 mt-4">
                   {people.map((pid) => {
                     const p = PERSONAS.find((x) => x.id === pid)!;
@@ -89,6 +94,25 @@ export const JourneyOverview: React.FC<Props> = ({ onStartWalkthrough, onOpenPer
               </button>
             );
           })}
+        </div>
+      </section>
+
+      {/* The IG behind the demo */}
+      <section className="bg-white rounded-2xl border border-clinical-divider p-5 shadow-sm flex flex-col md:flex-row md:items-center gap-3">
+        <BookOpen className="w-6 h-6 text-sky-600 flex-shrink-0" />
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-bold text-slate-900">This walkthrough is the demo of a FHIR implementation guide</div>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            The same journey is documented as a WHO SMART Guidelines DAK and FHIR IG: personas, business processes (BPMN),
+            requirements, and every payload shown here as a published FHIR example.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs font-semibold">
+          <ExtLink href={IG.site}>The IG</ExtLink>
+          <ExtLink href={IG.journeys}>Journeys</ExtLink>
+          <ExtLink href={IG.processes}>Business processes</ExtLink>
+          <ExtLink href={IG.examples}>FHIR examples</ExtLink>
+          <ExtLink href={IG.repo}>Source</ExtLink>
         </div>
       </section>
 

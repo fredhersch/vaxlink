@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Compass, Map, User, Presentation, Cpu, MessageCircleQuestion } from 'lucide-react';
 import { ScreenId } from '../../types';
 import { PersonaId } from '../../data/journeyData';
@@ -9,6 +9,7 @@ import { Walkthrough } from './Walkthrough';
 import { HowItWorks } from './HowItWorks';
 import { DiscussionView } from './DiscussionView';
 import { BuildingBlockId, FhirInspectorTab } from '../../data/techData';
+import { viewHref } from '../../routes';
 
 export type JourneyView = 'overview' | 'map' | 'personas' | 'walkthrough' | 'how' | 'discuss';
 
@@ -22,6 +23,8 @@ interface Props {
   onOpenScreen: (screenId: ScreenId) => void;
   showFacilitatorNotes: boolean;
   onInspectFhir: (tab: FhirInspectorTab) => void;
+  selectedBlock: BuildingBlockId | null;
+  onSelectBlock: (id: BuildingBlockId | null) => void;
 }
 
 const VIEWS: { id: JourneyView; label: string; hint: string; Icon: typeof Map }[] = [
@@ -43,8 +46,9 @@ export const UserJourneys: React.FC<Props> = ({
   onOpenScreen,
   showFacilitatorNotes,
   onInspectFhir,
+  selectedBlock,
+  onSelectBlock: setSelectedBlock,
 }) => {
-  const [selectedBlock, setSelectedBlock] = useState<BuildingBlockId | null>('gdhcn');
   const openBlock = (id: BuildingBlockId) => {
     setSelectedBlock(id);
     onChangeView('how');
@@ -62,9 +66,10 @@ export const UserJourneys: React.FC<Props> = ({
           {VIEWS.map(({ id, label, hint, Icon }) => {
             const active = view === id;
             return (
-              <button
+              <a
                 key={id}
-                onClick={() => onChangeView(id)}
+                href={viewHref(id)}
+                aria-current={active ? 'page' : undefined}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-left transition ${
                   active ? 'bg-slate-900 border-slate-900 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                 }`}
@@ -74,7 +79,7 @@ export const UserJourneys: React.FC<Props> = ({
                   <span className="block text-sm font-semibold leading-tight">{label}</span>
                   <span className={`block text-[10px] ${active ? 'text-slate-300' : 'text-slate-400'}`}>{hint}</span>
                 </span>
-              </button>
+              </a>
             );
           })}
         </nav>

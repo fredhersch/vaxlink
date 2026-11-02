@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActiveTab, ScreenId, DeviceType } from './types';
 import { JOURNEY_STAGES } from './data/storylineData';
 import { Header } from './components/common/Header';
@@ -16,8 +16,9 @@ import { S7_VhlQrDisplay } from './components/screens/S7_VhlQrDisplay';
 import { S8_ForeignClinicViewer } from './components/screens/S8_ForeignClinicViewer';
 
 import { UserJourneys, JourneyView } from './components/userJourneys/UserJourneys';
-import { JOURNEY_STEPS, PersonaId } from './data/journeyData';
-import { FhirInspectorTab } from './data/techData';
+import { JOURNEY_STEPS, PERSONA_BY_ID, PersonaId } from './data/journeyData';
+import { BLOCK_BY_ID, BuildingBlockId, FhirInspectorTab } from './data/techData';
+import { parseHash, screenHref, viewHref } from './routes';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('journeys');
@@ -36,6 +37,50 @@ export function App() {
   const [isFramed, setIsFramed] = useState<boolean>(true);
   const [isFhirDrawerOpen, setIsFhirDrawerOpen] = useState<boolean>(false);
   const [isPresenterMode, setIsPresenterMode] = useState<boolean>(true);
+
+  const [selectedBlock, setSelectedBlock] = useState<BuildingBlockId | null>('gdhcn');
+
+  // Every view has its own address (#/walkthrough/J3b, #/demo/S4, …) so it can be linked and bookmarked.
+  useEffect(() => {
+    const apply = () => {
+      const r = parseHash(window.location.hash);
+      if (!r) return;
+      if (r.tab === 'screens') {
+        setCurrentScreenId(r.screen);
+        setActiveTab('screens');
+        return;
+      }
+      setActiveTab('journeys');
+      setJourneyView(r.view);
+      if (!r.arg) return;
+      if (r.view === 'walkthrough' || r.view === 'map') {
+        const i = JOURNEY_STEPS.findIndex((s) => s.stageCode === r.arg);
+        if (i >= 0) setJourneyStepIndex(i);
+      } else if (r.view === 'personas' && r.arg in PERSONA_BY_ID) {
+        setJourneyPersona(r.arg as PersonaId);
+      } else if (r.view === 'how' && r.arg in BLOCK_BY_ID) {
+        setSelectedBlock(r.arg as BuildingBlockId);
+      }
+    };
+    apply();
+    window.addEventListener('hashchange', apply);
+    return () => window.removeEventListener('hashchange', apply);
+  }, []);
+
+  useEffect(() => {
+    const arg =
+      journeyView === 'walkthrough'
+        ? JOURNEY_STEPS[journeyStepIndex]?.stageCode
+        : journeyView === 'personas'
+        ? journeyPersona
+        : journeyView === 'how'
+        ? selectedBlock ?? undefined
+        : undefined;
+    const hash = activeTab === 'screens' ? screenHref(currentScreenId) : viewHref(journeyView, arg);
+    if (window.location.hash === hash) return;
+    if (window.location.hash) window.history.pushState(null, '', hash);
+    else window.history.replaceState(null, '', hash);
+  }, [activeTab, journeyView, journeyStepIndex, journeyPersona, selectedBlock, currentScreenId]);
 
   const currentStageMetadata = JOURNEY_STAGES.find((s) => s.screenId === currentScreenId) || JOURNEY_STAGES[0];
 
@@ -174,6 +219,8 @@ export function App() {
             onOpenScreen={openScreenFromJourney}
             showFacilitatorNotes={isPresenterMode}
             onInspectFhir={inspectFhir}
+            selectedBlock={selectedBlock}
+            onSelectBlock={setSelectedBlock}
           />
         )}
 

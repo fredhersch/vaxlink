@@ -8,7 +8,7 @@ import { ScreenId } from '../types';
  * feel, what could go wrong, and how Somsack's record changes along the way.
  */
 
-export type PersonaId = 'khamla' | 'bounmy' | 'soukanh' | 'chanthasone' | 'somchai';
+export type PersonaId = 'somsack' | 'khamla' | 'bounmy' | 'soukanh' | 'chanthasone' | 'somchai';
 
 /** -2 = distressed, -1 = worried, 0 = neutral, 1 = reassured, 2 = delighted */
 export type Emotion = -2 | -1 | 0 | 1 | 2;
@@ -82,6 +82,24 @@ export interface JourneyStep {
 }
 
 export const PERSONAS: Persona[] = [
+  {
+    id: 'somsack',
+    name: 'Somsack',
+    role: 'Baby · the record follows him',
+    country: 'Lao PDR',
+    initials: 'baby',
+    goal: 'Get every vaccine he needs, once, wherever he is.',
+    needs: [
+      'His birth doses to count at home',
+      'No repeated or missed vaccines',
+      'His history to be there when a doctor needs it',
+    ],
+    frustrations: [
+      'Born where he has no national ID',
+      'Invisible to the home system until someone registers him',
+    ],
+    color: { dot: 'bg-lime-600', soft: 'bg-lime-50', border: 'border-lime-200', text: 'text-lime-800', hex: '#65a30d' },
+  },
   {
     id: 'khamla',
     name: 'Khamla',
@@ -246,6 +264,11 @@ export const JOURNEY_STEPS: JourneyStep[] = [
         feeling: '“He isn’t Thai, but he still needs a record he can take home.”',
         emotion: 1,
       },
+      somsack: {
+        doing: 'Is born, and gets his Hep B and BCG birth doses within hours.',
+        feeling: '“Two small jabs, and a record that will follow him.”',
+        emotion: 0,
+      },
       khamla: {
         doing: 'Gives birth away from home and receives two paper cards at discharge.',
         feeling: '“Will anyone back home believe these papers?”',
@@ -279,6 +302,11 @@ export const JOURNEY_STEPS: JourneyStep[] = [
         doing: 'Adds Somsack to the Sengmany household roster on her offline phone.',
         feeling: '“No signal for weeks — but I need to register him today.”',
         emotion: 0,
+      },
+      somsack: {
+        doing: 'Is added to his household: the Lao health system now knows he exists.',
+        feeling: '“Three weeks old, and now he counts.”',
+        emotion: 1,
       },
       khamla: {
         doing: 'Tells Soukanh about the birth in Thailand and shows the cards.',
@@ -485,6 +513,11 @@ export const JOURNEY_STEPS: JourneyStep[] = [
         doing: 'Scans the QR, enters the passcode Bounmy tells him, and sees all six doses.',
         feeling: '“Born here, vaccinated there — and I can see all of it.”',
         emotion: 2,
+      },
+      somsack: {
+        doing: 'Back in Chiang Rai with a fever, he is seen by the doctor who vaccinated him at birth.',
+        feeling: '“A strange room, but nobody has to guess what he has had.”',
+        emotion: 1,
       },
       bounmy: {
         doing: 'Shows the QR on his phone and says the passcode out loud.',
