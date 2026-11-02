@@ -1,4 +1,14 @@
 import { JourneyStage, PatientDemographics, ImmunizationRecord } from '../types';
+// FHIR examples from the SMART Trust demonstrator IG (litlfred/smart-trust-demo),
+// where this journey is documented as a DAK and IG. Refresh with
+// `node scripts/sync-ig-examples.mjs`.
+import igPatient from './ig/Patient-TrustDemoSomsack.json';
+import igGroup from './ig/Group-TrustDemoHousehold.json';
+import igImmunizationHepB from './ig/Immunization-TrustDemoJ3HepB.json';
+import igServiceRequest from './ig/ServiceRequest-TrustDemoJ2Referral.json';
+import igProvenance from './ig/Provenance-TrustDemoJ3Verification.json';
+import igAuditEvent from './ig/AuditEvent-TrustDemoJ41Access.json';
+import igConceptMap from './ig/ConceptMap-TrustDemoProductToLaoEpi.json';
 
 export const PATIENT_DATA: PatientDemographics = {
   infantName: "Somsack Sengmany",
@@ -132,7 +142,7 @@ export const JOURNEY_STAGES: JourneyStage[] = [
     country: "Thailand",
     countryCode: "THA",
     location: "Chiang Rai Provincial Hospital",
-    actor: "Maternity Nurse / Dr. Somchai",
+    actor: "Maternity Nurse / Dr. Anan",
     actorRole: "Country A Birth Clinic",
     appConfig: "Hospital EMR & Print Station",
     deviceType: "TABLET",
@@ -153,7 +163,7 @@ export const JOURNEY_STAGES: JourneyStage[] = [
     country: "Lao PDR",
     countryCode: "LAO",
     location: "Catchment Village 04, Lao PDR",
-    actor: "Soukanh (CHW)",
+    actor: "Vilay (CHW)",
     actorRole: "Community Health Worker",
     appConfig: "OHS Player Community Config (Offline Android)",
     deviceType: "MOBILE",
@@ -174,7 +184,7 @@ export const JOURNEY_STAGES: JourneyStage[] = [
     country: "Lao PDR",
     countryCode: "LAO",
     location: "Catchment Village 04, Lao PDR",
-    actor: "Soukanh (CHW)",
+    actor: "Vilay (CHW)",
     actorRole: "Community Health Worker",
     appConfig: "OHS Player Community Config (Offline Android)",
     deviceType: "MOBILE",
@@ -279,7 +289,7 @@ export const JOURNEY_STAGES: JourneyStage[] = [
     country: "Thailand",
     countryCode: "THA",
     location: "Bangkok / Chiang Rai Primary Care Clinic",
-    actor: "Dr. Somchai (Clinician)",
+    actor: "Dr. Anan (Clinician)",
     actorRole: "Country A Clinician",
     appConfig: "OHS Player Viewer Config (Web/Tablet)",
     deviceType: "TABLET",
@@ -295,279 +305,13 @@ export const JOURNEY_STAGES: JourneyStage[] = [
 
 // Sample raw payloads for FHIR and cryptographic inspection
 export const MOCK_FHIR_RESOURCES = {
-  patient: {
-    resourceType: "Patient",
-    id: "pat-somsack-sengmany",
-    meta: {
-      versionId: "3",
-      lastUpdated: "2025-11-25T08:30:00Z",
-      profile: ["http://hl7.org/fhir/uv/ips/StructureDefinition/Patient-uv-ips"]
-    },
-    identifier: [
-      {
-        system: "http://moh.gov.la/fhir/identifier/temporary-id",
-        value: "LAO-TMP-2025-00918"
-      }
-    ],
-    active: true,
-    name: [
-      {
-        use: "official",
-        family: "Sengmany",
-        given: ["Somsack"]
-      }
-    ],
-    gender: "male",
-    birthDate: "2025-10-28",
-    contact: [
-      {
-        relationship: [
-          {
-            coding: [
-              {
-                system: "http://terminology.hl7.org/CodeSystem/v2-0131",
-                code: "MTH",
-                display: "Mother"
-              }
-            ]
-          }
-        ],
-        name: {
-          family: "Sengmany",
-          given: ["Khamla"]
-        }
-      }
-    ]
-  },
-  group: {
-    resourceType: "Group",
-    id: "grp-hh-lao-204",
-    type: "person",
-    actual: true,
-    code: {
-      coding: [
-        {
-          system: "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
-          code: "HHO",
-          display: "Household"
-        }
-      ]
-    },
-    name: "Sengmany Household",
-    quantity: 3,
-    member: [
-      {
-        entity: {
-          reference: "RelatedPerson/rel-khamla-mother",
-          display: "Khamla Sengmany (Mother, 26y)"
-        }
-      },
-      {
-        entity: {
-          reference: "RelatedPerson/rel-bounmy-father",
-          display: "Bounmy Sengmany (Father, 29y - Head)"
-        }
-      },
-      {
-        entity: {
-          reference: "Patient/pat-somsack-sengmany",
-          display: "Somsack Sengmany (Child, Born 2025-10-28)"
-        }
-      }
-    ]
-  },
-  immunizationHepB: {
-    resourceType: "Immunization",
-    id: "imm-th-hepb-001",
-    meta: {
-      profile: ["http://smart.who.int/immunizations/StructureDefinition/Immunization-who"]
-    },
-    status: "completed",
-    vaccineCode: {
-      coding: [
-        {
-          system: "http://smart.who.int/immunizations/CodeSystem/PreQual",
-          code: "vp-hepb-peds-monovalent",
-          display: "WHO PreQual Hepatitis B Pediatric Monovalent"
-        },
-        {
-          system: "http://moh.gov.la/fhir/CodeSystem/epi-schedule",
-          code: "LAO-EPI-HEPB-BD",
-          display: "Lao PDR EPI: Hepatitis B Birth Dose"
-        }
-      ],
-      text: "Hepatitis B Pediatric Birth Dose"
-    },
-    patient: {
-      reference: "Patient/pat-somsack-sengmany"
-    },
-    occurrenceDateTime: "2025-10-28T09:15:00+07:00",
-    primarySource: true,
-    lotNumber: "TH-4821",
-    location: {
-      display: "Chiang Rai Provincial Hospital, Thailand"
-    }
-  },
-  serviceRequest: {
-    resourceType: "ServiceRequest",
-    id: "req-verify-foreign-dvc-001",
-    status: "active",
-    intent: "order",
-    priority: "routine",
-    code: {
-      coding: [
-        {
-          system: "http://snomed.info/sct",
-          code: "715515008",
-          display: "Immunization verification and schedule catchup"
-        }
-      ],
-      text: "Verify foreign paper DVC QR signature & map birth doses to Lao national schedule"
-    },
-    subject: {
-      reference: "Patient/pat-somsack-sengmany",
-      display: "Somsack Sengmany"
-    },
-    requester: {
-      reference: "Practitioner/chw-soukanh",
-      display: "Soukanh (CHW Village 04)"
-    },
-    performer: [
-      {
-        reference: "Organization/fac-vientiane-district-hc",
-        display: "Vientiane District Health Center"
-      }
-    ],
-    reasonCode: [
-      {
-        text: "Unverified foreign vaccination card presented during rural home visit (primarySource=false)"
-      }
-    ]
-  },
-  provenance: {
-    resourceType: "Provenance",
-    id: "prv-gdhcn-th-001",
-    target: [
-      {
-        reference: "Immunization/imm-th-hepb-001"
-      },
-      {
-        reference: "Immunization/imm-th-bcg-002"
-      }
-    ],
-    recorded: "2025-11-25T10:14:22Z",
-    policy: [
-      "http://smart.who.int/trust/policy/gdhcn-dev-v1"
-    ],
-    agent: [
-      {
-        type: {
-          coding: [
-            {
-              system: "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
-              code: "verifier",
-              display: "Verifier"
-            }
-          ]
-        },
-        who: {
-          display: "Nurse Chanthasone (Vientiane District Health Center)"
-        }
-      },
-      {
-        type: {
-          coding: [
-            {
-              system: "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
-              code: "author",
-              display: "Author"
-            }
-          ]
-        },
-        who: {
-          display: "Thailand Ministry of Public Health (GDHCN DEV Participant XXR)"
-        }
-      }
-    ],
-    signature: [
-      {
-        type: [
-          {
-            system: "urn:iso-astm:E1762-95:2013",
-            code: "1.2.840.10065.1.12.1.1",
-            display: "Author's Signature"
-          }
-        ],
-        when: "2025-10-28T09:30:00Z",
-        who: {
-          reference: "Device/gdhcn-signer-xxr-dev"
-        },
-        data: "COSE_Sign1_ES256:kid:916ffa567c0f44a2:sig:4e78a0c4...99f1"
-      }
-    ]
-  },
-  auditEvent: {
-    resourceType: "AuditEvent",
-    id: "aud-vhl-crossborder-fetch-8891",
-    type: {
-      system: "http://dicom.nema.org/resources/ontology/DCM",
-      code: "110112",
-      display: "Query"
-    },
-    subtype: [
-      {
-        system: "urn:oid:1.3.6.1.4.1.19376.1.2",
-        code: "ITI-VHL-FETCH",
-        display: "Verifiable Health Link IPS Manifest Retrieval"
-      }
-    ],
-    action: "E", // Execute
-    recorded: "2026-10-28T14:30:15+07:00",
-    outcome: "0", // Success
-    outcomeDesc: "Passcode 4829 verified. Decryption key released. Signed IPS Bundle delivered to Country A Clinician.",
-    agent: [
-      {
-        type: {
-          text: "Clinician at Point of Care (Country A)"
-        },
-        who: {
-          display: "Dr. Somchai (Chiang Rai Primary Care Clinic, Thailand)"
-        },
-        requestor: true,
-        network: {
-          address: "203.150.21.90",
-          type: "2"
-        }
-      },
-      {
-        type: {
-          text: "Host Sovereign FHIR Repository (Country B)"
-        },
-        who: {
-          display: "Lao PDR National OHS Info Gateway"
-        },
-        requestor: false
-      }
-    ],
-    entity: [
-      {
-        what: {
-          reference: "Patient/pat-somsack-sengmany",
-          display: "Somsack Sengmany"
-        },
-        type: {
-          system: "http://terminology.hl7.org/CodeSystem/audit-entity-type",
-          code: "1",
-          display: "Person"
-        },
-        role: {
-          system: "http://terminology.hl7.org/CodeSystem/object-role",
-          code: "1",
-          display: "Patient"
-        }
-      }
-    ]
-  },
+  patient: igPatient,
+  group: igGroup,
+  immunizationHepB: igImmunizationHepB,
+  serviceRequest: igServiceRequest,
+  provenance: igProvenance,
+  auditEvent: igAuditEvent,
+  conceptMap: igConceptMap,
   cborPayload: {
     header: {
       "1": -7, // ES256

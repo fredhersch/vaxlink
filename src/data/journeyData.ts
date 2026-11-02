@@ -8,7 +8,7 @@ import { ScreenId } from '../types';
  * feel, what could go wrong, and how Somsack's record changes along the way.
  */
 
-export type PersonaId = 'khamla' | 'bounmy' | 'soukanh' | 'chanthasone' | 'somchai';
+export type PersonaId = 'somsack' | 'khamla' | 'bounmy' | 'vilay' | 'chanthasone' | 'anan';
 
 /** -2 = distressed, -1 = worried, 0 = neutral, 1 = reassured, 2 = delighted */
 export type Emotion = -2 | -1 | 0 | 1 | 2;
@@ -83,6 +83,24 @@ export interface JourneyStep {
 
 export const PERSONAS: Persona[] = [
   {
+    id: 'somsack',
+    name: 'Somsack',
+    role: 'Baby · the record follows him',
+    country: 'Lao PDR',
+    initials: 'baby',
+    goal: 'Get every vaccine he needs, once, wherever he is.',
+    needs: [
+      'His birth doses to count at home',
+      'No repeated or missed vaccines',
+      'His history to be there when a doctor needs it',
+    ],
+    frustrations: [
+      'Born where he has no national ID',
+      'Invisible to the home system until someone registers him',
+    ],
+    color: { dot: 'bg-lime-600', soft: 'bg-lime-50', border: 'border-lime-200', text: 'text-lime-800', hex: '#65a30d' },
+  },
+  {
     id: 'khamla',
     name: 'Khamla',
     role: 'Mother',
@@ -120,11 +138,11 @@ export const PERSONAS: Persona[] = [
     color: { dot: 'bg-violet-500', soft: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-800', hex: '#8b5cf6' },
   },
   {
-    id: 'soukanh',
-    name: 'Soukanh',
+    id: 'vilay',
+    name: 'Vilay',
     role: 'Community health worker · Village 04',
     country: 'Lao PDR',
-    initials: 'SO',
+    initials: 'VI',
     goal: 'Make sure no newborn in her village is missed, even with no signal.',
     needs: [
       'Tools that work offline for weeks',
@@ -156,11 +174,11 @@ export const PERSONAS: Persona[] = [
     color: { dot: 'bg-sky-500', soft: 'bg-sky-50', border: 'border-sky-200', text: 'text-sky-800', hex: '#0ea5e9' },
   },
   {
-    id: 'somchai',
-    name: 'Dr. Somchai',
+    id: 'anan',
+    name: 'Dr. Anan',
     role: 'Thai clinician · birth & follow-up',
     country: 'Thailand',
-    initials: 'DS',
+    initials: 'DA',
     goal: 'Give a non-Thai baby proper care, at birth and when he returns.',
     needs: [
       'A way to issue records that travel with the family',
@@ -239,12 +257,17 @@ export const JOURNEY_STEPS: JourneyStep[] = [
     when: 'T0 · Birth day',
     where: 'Chiang Rai Provincial Hospital',
     touchpoint: 'Hospital records + printed QR cards',
-    lead: 'somchai',
+    lead: 'anan',
     moments: {
-      somchai: {
+      anan: {
         doing: 'Gives Hep B and BCG birth doses and prints two signed QR vaccine cards.',
         feeling: '“He isn’t Thai, but he still needs a record he can take home.”',
         emotion: 1,
+      },
+      somsack: {
+        doing: 'Is born, and gets his Hep B and BCG birth doses within hours.',
+        feeling: '“Two small jabs, and a record that will follow him.”',
+        emotion: 0,
       },
       khamla: {
         doing: 'Gives birth away from home and receives two paper cards at discharge.',
@@ -269,19 +292,24 @@ export const JOURNEY_STEPS: JourneyStep[] = [
     screenId: 'S2',
     chapterId: 'found-at-home',
     title: 'A health worker finds the baby at home',
-    headline: 'On a routine village visit, Soukanh discovers a newborn the Lao system doesn’t know exists — and registers him with no signal.',
+    headline: 'On a routine village visit, Vilay discovers a newborn the Lao system doesn’t know exists — and registers him with no signal.',
     when: 'T0 + 3 weeks',
     where: 'Catchment Village 04',
     touchpoint: 'Offline phone app (household form)',
-    lead: 'soukanh',
+    lead: 'vilay',
     moments: {
-      soukanh: {
+      vilay: {
         doing: 'Adds Somsack to the Sengmany household roster on her offline phone.',
         feeling: '“No signal for weeks — but I need to register him today.”',
         emotion: 0,
       },
+      somsack: {
+        doing: 'Is added to his household: the Lao health system now knows he exists.',
+        feeling: '“Three weeks old, and now he counts.”',
+        emotion: 1,
+      },
       khamla: {
-        doing: 'Tells Soukanh about the birth in Thailand and shows the cards.',
+        doing: 'Tells Vilay about the birth in Thailand and shows the cards.',
         feeling: '“I hope we’re not in trouble for giving birth abroad.”',
         emotion: -1,
       },
@@ -296,7 +324,7 @@ export const JOURNEY_STEPS: JourneyStep[] = [
     record: { level: 0, description: 'Baby registered; vaccines still only on paper', heldWhere: 'Paper cards + CHW phone' },
     handoff: 'Somsack is now on the household roster',
     whatIf: {
-      scenario: 'Soukanh’s phone stays offline for 28 days.',
+      scenario: 'Vilay’s phone stays offline for 28 days.',
       outcome: 'Everything stays queued safely on the device and syncs when she next reaches the health center.',
     },
     askTheRoom: 'Who should be allowed to create a health identity for a newborn — and how early?',
@@ -308,13 +336,13 @@ export const JOURNEY_STEPS: JourneyStep[] = [
     screenId: 'S3',
     chapterId: 'found-at-home',
     title: 'The cards are scanned — but not trusted yet',
-    headline: 'Soukanh can read the vaccines on the cards, but she can’t prove they are genuine. So she records them as “reported” and refers the family on.',
+    headline: 'Vilay can read the vaccines on the cards, but she can’t prove they are genuine. So she records them as “reported” and refers the family on.',
     when: 'T0 + 3 weeks',
     where: 'Catchment Village 04',
     touchpoint: 'Offline phone app (QR scan + referral)',
-    lead: 'soukanh',
+    lead: 'vilay',
     moments: {
-      soukanh: {
+      vilay: {
         doing: 'Scans both QR cards, saves them as unverified and books a clinic referral.',
         feeling: '“I can read it, but I can’t prove it’s real out here.”',
         emotion: 0,
@@ -475,16 +503,21 @@ export const JOURNEY_STEPS: JourneyStep[] = [
     screenId: 'S8',
     chapterId: 'crossing-back',
     title: 'A Thai doctor sees the full history',
-    headline: 'Back where it all began, Dr. Somchai scans the link, hears the passcode, and sees Somsack’s whole first year — and Lao PDR is told who looked.',
+    headline: 'Back where it all began, Dr. Anan scans the link, hears the passcode, and sees Somsack’s whole first year — and Lao PDR is told who looked.',
     when: 'T0 + 12 months',
     where: 'Chiang Rai primary care clinic',
     touchpoint: 'Clinic viewer (scan link + passcode)',
-    lead: 'somchai',
+    lead: 'anan',
     moments: {
-      somchai: {
+      anan: {
         doing: 'Scans the QR, enters the passcode Bounmy tells him, and sees all six doses.',
         feeling: '“Born here, vaccinated there — and I can see all of it.”',
         emotion: 2,
+      },
+      somsack: {
+        doing: 'Back in Chiang Rai with a fever, he is seen by the doctor who vaccinated him at birth.',
+        feeling: '“A strange room, but nobody has to guess what he has had.”',
+        emotion: 1,
       },
       bounmy: {
         doing: 'Shows the QR on his phone and says the passcode out loud.',

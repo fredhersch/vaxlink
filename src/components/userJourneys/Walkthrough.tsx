@@ -16,7 +16,11 @@ import {
 } from 'lucide-react';
 import { ScreenId } from '../../types';
 import { CHAPTERS, JOURNEY_STEPS, PERSONA_BY_ID, PersonaId, RECORD_TRUST_LADDER } from '../../data/journeyData';
-import { EmotionBadge, PersonaAvatar, TrustMeter, countryChip } from './shared';
+import { EmotionBadge, PersonaAvatar, PersonaText, TrustMeter, countryChip } from './shared';
+import { MomentIllustration } from './MomentIllustration';
+import { MomentPicture } from './MomentPicture';
+import { ConceptMapIllustration } from './ConceptMapIllustration';
+import { stepHref } from '../../routes';
 import { TechLayerPanel } from './TechLayerPanel';
 import { BuildingBlockId, FhirInspectorTab } from '../../data/techData';
 
@@ -84,14 +88,19 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
             const isCurrent = c.id === chapter.id;
             return (
               <div key={c.id} className="space-y-1">
-                <div className={`text-[10px] font-semibold truncate ${isCurrent ? 'text-slate-900' : 'text-slate-400'}`}>
-                  {c.number}. {c.title}
+                <div
+                  className={`text-[10px] font-semibold truncate ${isCurrent ? 'text-slate-900' : 'text-slate-400'}`}
+                  title={`${c.number}. ${c.title}`}
+                >
+                  {c.number}.<span className="hidden sm:inline"> {c.title}</span>
                 </div>
                 <div className="flex gap-1">
                   {indices.map((i) => (
-                    <button
+                    <a
                       key={i}
+                      href={stepHref(JOURNEY_STEPS[i].stageCode)}
                       onClick={() => onChangeStep(i)}
+                      aria-label={`${JOURNEY_STEPS[i].stageCode}: ${JOURNEY_STEPS[i].title}`}
                       title={`${JOURNEY_STEPS[i].stageCode}: ${JOURNEY_STEPS[i].title}`}
                       className={`h-2 flex-1 rounded-full transition ${
                         i === stepIndex ? 'bg-sky-600' : i < stepIndex ? 'bg-sky-300' : 'bg-slate-200 hover:bg-slate-300'
@@ -130,8 +139,20 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
                 {step.stageCode} · {stepIndex + 1}/{JOURNEY_STEPS.length}
               </span>
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-clinical-ink leading-tight">{step.title}</h2>
-            <p className="text-base md:text-lg text-slate-700 leading-relaxed">{step.headline}</p>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+              <h2 className="flex-1 text-2xl md:text-3xl font-bold text-clinical-ink leading-tight">
+                <a href={stepHref(step.stageCode)} className="hover:underline decoration-slate-300" title="Link to this moment">
+                  {step.title}
+                </a>
+              </h2>
+              <div className="sm:w-64 flex-shrink-0 space-y-1.5">
+                <MomentPicture chapterId={step.chapterId} />
+                <MomentIllustration chapterId={step.chapterId} size="sm" />
+              </div>
+            </div>
+            <p className="text-base md:text-lg text-slate-700 leading-relaxed">
+              <PersonaText text={step.headline} />
+            </p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
               <span>🕒 {step.when}</span>
               <span>📍 {step.where}</span>
@@ -157,7 +178,7 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
                       </div>
                       <EmotionBadge emotion={m.emotion} />
                     </div>
-                    <p className="text-sm text-slate-800 leading-snug">{m.doing}</p>
+                    <p className="text-sm text-slate-800 leading-snug"><PersonaText text={m.doing} /></p>
                     <p className="text-sm italic text-slate-600 leading-snug">{m.feeling}</p>
                   </div>
                 );
@@ -165,18 +186,20 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
             </div>
           </section>
 
+          {step.stageCode === 'J3b' && <ConceptMapIllustration />}
+
           <section className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div className="rounded-xl border border-rose-200 bg-rose-50/60 p-4">
               <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800 uppercase tracking-wider mb-1">
                 <AlertTriangle className="w-3.5 h-3.5" /> Without this
               </div>
-              <p className="text-slate-800 leading-snug">{step.painPoint}</p>
+              <p className="text-slate-800 leading-snug"><PersonaText text={step.painPoint} /></p>
             </div>
             <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-4">
               <div className="flex items-center gap-1.5 text-xs font-bold text-sky-800 uppercase tracking-wider mb-1">
                 <Sparkles className="w-3.5 h-3.5" /> What makes it work
               </div>
-              <p className="text-slate-800 leading-snug">{step.enabler}</p>
+              <p className="text-slate-800 leading-snug"><PersonaText text={step.enabler} /></p>
             </div>
           </section>
         </div>
@@ -194,12 +217,12 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
             </div>
             <TrustMeter level={step.record.level} />
             <div className="text-lg font-bold text-slate-900">{RECORD_TRUST_LADDER[step.record.level].label}</div>
-            <p className="text-sm text-slate-700">{step.record.description}</p>
+            <p className="text-sm text-slate-700"><PersonaText text={step.record.description} /></p>
             <p className="text-xs text-slate-500">Held in: {step.record.heldWhere}</p>
             <div className="flex items-start gap-1.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
               <ArrowRight className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
               <span>
-                <strong>Hand-off:</strong> {step.handoff}
+                <strong>Hand-off:</strong> <PersonaText text={step.handoff} />
               </span>
             </div>
           </section>

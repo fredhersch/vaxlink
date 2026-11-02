@@ -47,44 +47,7 @@ export const FhirInspectorDrawer: React.FC<FhirInspectorDrawerProps> = ({
       case 'cbor':
         return mergedResources.cborPayload;
       case 'conceptMap':
-        return {
-          resourceType: "ConceptMap",
-          id: "cm-whopq-to-lao-epi",
-          status: "active",
-          sourceUri: "http://smart.who.int/immunizations/CodeSystem/PreQual",
-          targetUri: "http://moh.gov.la/fhir/CodeSystem/epi-schedule",
-          group: [
-            {
-              source: "http://smart.who.int/immunizations/CodeSystem/PreQual",
-              target: "http://moh.gov.la/fhir/CodeSystem/epi-schedule",
-              element: [
-                {
-                  code: "vp-hepb-peds-monovalent",
-                  display: "WHO PreQual Hep B Pediatric Monovalent",
-                  target: [
-                    {
-                      code: "LAO-EPI-HEPB-BD",
-                      display: "Lao PDR EPI: Hepatitis B Birth Dose",
-                      equivalence: "equivalent",
-                      comment: "Adjudicated by clinician at Vientiane District Health Center (J3b)"
-                    }
-                  ]
-                },
-                {
-                  code: "vp-bcg-freeze-dried",
-                  display: "WHO PreQual BCG Freeze-Dried",
-                  target: [
-                    {
-                      code: "LAO-EPI-BCG-BD",
-                      display: "Lao PDR EPI: BCG Birth Dose",
-                      equivalence: "equivalent"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        };
+        return mergedResources.conceptMap;
       default:
         return mergedResources.immunizationHepB;
     }

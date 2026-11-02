@@ -1,7 +1,11 @@
 import React from 'react';
-import { Play, Building, Lightbulb, Info } from 'lucide-react';
+import { Play, Building, Lightbulb, Info, Workflow } from 'lucide-react';
 import { CHAPTERS, JOURNEY_STEPS } from '../../data/journeyData';
-import { ARCH_LAYERS, BLOCK_BY_ID, BUILDING_BLOCKS, BuildingBlockId, STEP_TECH } from '../../data/techData';
+import { ARCH_LAYERS, BLOCK_BY_ID, BLOCK_LINKS, BUILDING_BLOCKS, BuildingBlockId, STEP_TECH } from '../../data/techData';
+import { BPMN_PROCESSES, IG, bpmnLinks, bpmnSvg } from '../../data/links';
+import { ArchitectureDiagram } from './ArchitectureDiagram';
+import { ExtLink } from './shared';
+import { stepHref } from '../../routes';
 
 interface Props {
   selectedBlock: BuildingBlockId | null;
@@ -54,9 +58,13 @@ export const HowItWorks: React.FC<Props> = ({ selectedBlock, onSelectBlock, onPr
         <h3 className="text-base font-bold text-clinical-ink">How it works: from journey to architecture</h3>
         <p className="text-xs text-clinical-steel max-w-3xl">
           Every moment in the journey depends on a few standards and open tools. Pick a big idea or a building block to
-          see which moments it makes possible, or click a moment to present it with its technical layer.
+          see which moments it makes possible, or click a moment to present it with its technical layer. Everything here
+          is specified in the <ExtLink href={IG.site}>SMART Trust demonstrator FHIR IG</ExtLink> (
+          <ExtLink href={IG.repo}>source</ExtLink>).
         </p>
       </div>
+
+      <ArchitectureDiagram />
 
       {/* Big ideas */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
@@ -142,7 +150,7 @@ export const HowItWorks: React.FC<Props> = ({ selectedBlock, onSelectBlock, onPr
                           isSel ? layer.className.soft : 'bg-white hover:bg-slate-50'
                         } ${dim ? 'opacity-50' : ''}`}
                       >
-                        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${layer.className.dot}`} />
+                        <span className={`w-2 h-2 rounded-[2px] flex-shrink-0 ${layer.className.dot}`} />
                         <span className={`text-[11px] leading-tight ${isSel ? 'font-bold text-slate-900' : 'text-slate-700'}`}>{b.short}</span>
                       </button>
                       {JOURNEY_STEPS.map((s, i) => {
@@ -157,7 +165,7 @@ export const HowItWorks: React.FC<Props> = ({ selectedBlock, onSelectBlock, onPr
                                 onClick={() => onSelectBlock(b.id)}
                                 onDoubleClick={() => onPresentStep(i)}
                                 title={`${s.stageCode}: ${use.role}`}
-                                className={`w-4 h-4 rounded-full ${layer.className.dot} ring-2 ring-white shadow-sm hover:scale-125 transition`}
+                                className={`w-3.5 h-3.5 rounded-[3px] ${layer.className.dot} ring-2 ring-white shadow-sm hover:scale-125 transition`}
                               />
                             )}
                           </div>
@@ -194,6 +202,18 @@ export const HowItWorks: React.FC<Props> = ({ selectedBlock, onSelectBlock, onPr
                 <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">So what for the journey</div>
                 <p className="text-sm text-slate-900 leading-relaxed">{block.soWhat}</p>
               </div>
+              {BLOCK_LINKS[block.id]?.length > 0 && (
+                <div>
+                  <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Learn more</div>
+                  <ul className="space-y-0.5 text-xs">
+                    {BLOCK_LINKS[block.id].map((l) => (
+                      <li key={l.url}>
+                        <ExtLink href={l.url}>{l.label}</ExtLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <div>
                 <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Moments it makes possible</div>
                 <ul className="space-y-1.5">
@@ -223,6 +243,43 @@ export const HowItWorks: React.FC<Props> = ({ selectedBlock, onSelectBlock, onPr
           )}
         </aside>
       </div>
+
+      {/* Every workflow, as BPMN in the IG */}
+      <section className="bg-white rounded-2xl border border-clinical-divider shadow-sm p-4 md:p-5 space-y-3">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h3 className="text-base font-bold text-clinical-ink flex items-center gap-2">
+            <Workflow className="w-4 h-4 text-slate-600" /> Business processes (BPMN)
+          </h3>
+          <span className="text-xs text-clinical-steel">
+            Each workflow in the journey is documented as BPMN in the IG: <ExtLink href={IG.processes}>business processes</ExtLink>.
+          </span>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {BPMN_PROCESSES.map((p) => (
+            <figure key={p.file} className="rounded-xl border border-slate-200 p-3 space-y-2">
+              <figcaption className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="font-semibold text-slate-900">{p.title}</span>
+                <span className="flex gap-1 ml-auto">
+                  {p.stages.map((st) => (
+                    <a key={st} href={stepHref(st)} className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-sky-100 text-slate-700">
+                      {st}
+                    </a>
+                  ))}
+                </span>
+              </figcaption>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+                <ExtLink href={bpmnLinks(p).ig}>In the IG</ExtLink>
+                <ExtLink href={bpmnLinks(p).viewer}>Process viewer</ExtLink>
+                <ExtLink href={bpmnLinks(p).scenario}>User scenario</ExtLink>
+                <ExtLink href={bpmnLinks(p).source}>BPMN source</ExtLink>
+              </div>
+              <a href={bpmnLinks(p).ig} target="_blank" rel="noopener noreferrer" title="Open this process in the IG" className="block overflow-x-auto">
+                <img src={bpmnSvg(p.file)} alt={`BPMN diagram: ${p.title}`} className="max-w-none h-48 w-auto" loading="lazy" />
+              </a>
+            </figure>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
