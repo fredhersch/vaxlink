@@ -320,7 +320,19 @@ export interface StepTech {
     online: boolean;
   };
   /** FHIR resources created or changed, optionally linked to the inspector. */
-  fhir: { resource: string; change: string; inspect?: FhirInspectorTab; spec?: string; example?: string }[];
+  fhir: {
+    resource: string;
+    change: string;
+    inspect?: FhirInspectorTab;
+    /** The base standard, linked lightly. */
+    spec?: string;
+    /** The IG profile this record conforms to, with the country that uses it. */
+    profile?: { id: string; country: 'Thailand' | 'Lao PDR' };
+    /** One line on why this record is there at this moment. */
+    why?: string;
+    /** IG example instances, Thai and Lao where both exist. */
+    examples?: { label: string; url: string }[];
+  }[];
 }
 
 export const STEP_TECH: Record<string, StepTech> = {
@@ -340,8 +352,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Immunization ×2', change: 'Created in the Thai system (Hep B, BCG)', inspect: 'immunization', spec: SPEC.immunization },
-      { resource: 'DVC payload', change: 'Signed CBOR/COSE certificate', inspect: 'cbor', spec: SPEC.trust },
+      { resource: 'Immunization ×2', change: 'Created in the Thai system (Hep B, BCG)', inspect: 'immunization', spec: SPEC.immunization, profile: { id: 'TrustDemoThImmunization', country: 'Thailand' }, why: 'The certificate can only carry what this record holds, so product, date, lot and dose number are required.', examples: [{ label: 'TH Hep B', url: IG.example('Immunization', 'TrustDemoJ1HepB') }, { label: 'TH BCG', url: IG.example('Immunization', 'TrustDemoJ1Bcg') }] },
+      { resource: 'DVC payload', change: 'Signed CBOR/COSE certificate', inspect: 'cbor', spec: SPEC.hcertQr, why: 'Not FHIR: the HCERT certificate that travels on paper, verifiable offline with Thailand’s key from GDHCN.' },
     ],
   },
   'J2a': {
@@ -359,9 +371,9 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Patient', change: 'Created with a temporary Lao ID', inspect: 'patient', example: IG.example('Patient', 'TrustDemoSomsack') },
-      { resource: 'Group (household)', change: 'Somsack added as member', inspect: 'group', spec: SPEC.group, example: IG.example('Group', 'TrustDemoHousehold') },
-      { resource: 'QuestionnaireResponse', change: 'The registration form, answered offline (SDC)', spec: SPEC.sdc, example: IG.example('QuestionnaireResponse', 'TrustDemoJ2Registration') },
+      { resource: 'Patient', change: 'Created with a temporary Lao ID', inspect: 'patient', spec: SPEC.fhir + 'patient.html', profile: { id: 'TrustDemoLaoPatient', country: 'Lao PDR' }, why: 'He is not in the Lao civil registry yet; a temporary id lets the CHW, clinic and portal all mean the same child. Thailand only gave him a hospital number.', examples: [{ label: 'LA patient', url: IG.example('Patient', 'TrustDemoSomsack') }, { label: 'TH patient', url: IG.example('Patient', 'TrustDemoThSomsack') }] },
+      { resource: 'Group (household)', change: 'Somsack added as member', inspect: 'group', spec: SPEC.group, profile: { id: 'TrustDemoLaoHousehold', country: 'Lao PDR' }, why: 'CHW work is organised by household: the roster is how a missing newborn is noticed.', examples: [{ label: 'LA household', url: IG.example('Group', 'TrustDemoHousehold') }] },
+      { resource: 'QuestionnaireResponse', change: 'The registration form, answered offline (SDC)', spec: SPEC.sdc, profile: { id: 'TrustDemoLaoRegistration', country: 'Lao PDR' }, why: 'The form is configuration, not code; keeping the answers lets every extracted record trace back to what was asked.', examples: [{ label: 'LA answers', url: IG.example('QuestionnaireResponse', 'TrustDemoJ2Registration') }, { label: 'LA form', url: IG.example('Questionnaire', 'TrustDemoHouseholdRegistration') }] },
     ],
   },
   'J2b': {
@@ -381,8 +393,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Immunization ×2', change: 'Created as primarySource = false', inspect: 'immunization', spec: SPEC.immunization, example: IG.example('Immunization', 'TrustDemoJ2HepBReported') },
-      { resource: 'ServiceRequest', change: 'Referral to District Health Center', inspect: 'serviceRequest', spec: SPEC.serviceRequest, example: IG.example('ServiceRequest', 'TrustDemoJ2Referral') },
+      { resource: 'Immunization ×2', change: 'Created as primarySource = false', inspect: 'immunization', spec: SPEC.immunization, profile: { id: 'TrustDemoLaoReportedImmunization', country: 'Lao PDR' }, why: 'Read without checking the signature, so kept as reported: not lost, but not counted by the schedule yet.', examples: [{ label: 'LA reported Hep B', url: IG.example('Immunization', 'TrustDemoJ2HepBReported') }, { label: 'TH original', url: IG.example('Immunization', 'TrustDemoJ1HepB') }] },
+      { resource: 'ServiceRequest', change: 'Referral to District Health Center', inspect: 'serviceRequest', spec: SPEC.serviceRequest, profile: { id: 'TrustDemoLaoReferral', country: 'Lao PDR' }, why: 'The phone cannot verify a DVC but the clinic can; the referral points at exactly the doses to check.', examples: [{ label: 'LA referral', url: IG.example('ServiceRequest', 'TrustDemoJ2Referral') }] },
     ],
   },
   'J3a': {
@@ -402,8 +414,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: false,
     },
     fhir: [
-      { resource: 'Immunization ×2', change: 'primarySource flipped to true', inspect: 'immunization', spec: SPEC.immunization, example: IG.example('Immunization', 'TrustDemoJ3HepB') },
-      { resource: 'Provenance', change: 'Created: author = Thailand MOPH, verifier = nurse', inspect: 'provenance', spec: SPEC.provenance, example: IG.example('Provenance', 'TrustDemoJ3Verification') },
+      { resource: 'Immunization ×2', change: 'primarySource flipped to true', inspect: 'immunization', spec: SPEC.immunization, profile: { id: 'TrustDemoLaoImmunization', country: 'Lao PDR' }, why: 'A verified DVC is the signing hospital’s own record, so the dose now counts; the Thai record it came from is unchanged.', examples: [{ label: 'LA verified Hep B', url: IG.example('Immunization', 'TrustDemoJ3HepB') }, { label: 'TH original', url: IG.example('Immunization', 'TrustDemoJ1HepB') }] },
+      { resource: 'Provenance', change: 'Created: author = Thailand MOPH, verifier = nurse', inspect: 'provenance', spec: SPEC.provenance, profile: { id: 'TrustDemoLaoDvcVerification', country: 'Lao PDR' }, why: 'Anyone who later doubts a dose can follow it back to the signed certificate and Thailand’s key.', examples: [{ label: 'LA verification', url: IG.example('Provenance', 'TrustDemoJ3Verification') }] },
     ],
   },
   'J3b': {
@@ -425,9 +437,9 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Immunization.vaccineCode', change: 'Lao EPI code added; PreQual code kept', inspect: 'immunization', example: IG.example('Immunization', 'TrustDemoJ3HepB') },
-      { resource: 'ConceptMap', change: 'Nurse’s mapping decision recorded', inspect: 'conceptMap', spec: SPEC.conceptMap, example: IG.example('ConceptMap', 'TrustDemoProductToLaoEpi') },
-      { resource: 'Task / Appointment', change: '6-week pentavalent booked', example: IG.example('Task', 'TrustDemoJ3Reminder') },
+      { resource: 'Immunization.vaccineCode', change: 'Lao EPI code added; PreQual code kept', inspect: 'immunization', spec: SPEC.immunization, profile: { id: 'TrustDemoLaoImmunization', country: 'Lao PDR' }, why: 'The Lao schedule runs on Lao EPI codes, so one is required; the Thai product code stays beside it, never overwritten.', examples: [{ label: 'LA dual-coded', url: IG.example('Immunization', 'TrustDemoJ3HepB') }, { label: 'TH product only', url: IG.example('Immunization', 'TrustDemoJ1HepB') }] },
+      { resource: 'ConceptMap', change: 'Nurse’s mapping decision recorded', inspect: 'conceptMap', spec: SPEC.conceptMap, why: 'Lao PDR’s own map from vaccine products to its schedule; a product with no mapping goes to the nurse.', examples: [{ label: 'LA map', url: IG.example('ConceptMap', 'TrustDemoProductToLaoEpi') }, { label: 'Nurse’s decision', url: IG.example('Provenance', 'TrustDemoJ3Adjudication') }] },
+      { resource: 'Task / Appointment', change: '6-week pentavalent booked', spec: SPEC.planDefinition, why: 'The Lao schedule (PlanDefinition) finds the 6-week doses due; the reminder brings him back.', examples: [{ label: 'LA schedule', url: IG.example('PlanDefinition', 'TrustDemoLaoInfantSchedule') }, { label: 'LA reminder', url: IG.example('Task', 'TrustDemoJ3Reminder') }] },
     ],
   },
   'J4.0a': {
@@ -447,8 +459,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Bundle (IPS)', change: 'Generated: 2 Thai + 4 Lao doses', spec: SPEC.ips, example: IG.example('Bundle', 'TrustDemoJ4Ips') },
-      { resource: 'Group (household)', change: 'Drives the profile switcher', inspect: 'group', example: IG.example('Group', 'TrustDemoHousehold') },
+      { resource: 'Bundle (IPS)', change: 'Generated: 2 Thai + 4 Lao doses', spec: SPEC.ips, why: 'An International Patient Summary is what any country’s clinic can read, whatever its own system.', examples: [{ label: 'LA summary', url: IG.example('Bundle', 'TrustDemoJ4Ips') }, { label: 'LA dose', url: IG.example('Immunization', 'TrustDemoLaoPenta1') }] },
+      { resource: 'Group (household)', change: 'Drives the profile switcher', inspect: 'group', spec: SPEC.group, profile: { id: 'TrustDemoLaoHousehold', country: 'Lao PDR' }, why: 'One shared phone, three family members: the household decides whose records the wallet shows.', examples: [{ label: 'LA household', url: IG.example('Group', 'TrustDemoHousehold') }] },
     ],
   },
   'J4.0b': {
@@ -467,8 +479,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Consent (IHE PCF)', change: 'Created: scope = IPS, expires in 14 days', spec: SPEC.pcf, example: IG.example('Consent', 'TrustDemoJ4Consent') },
-      { resource: 'VHL manifest', change: 'Signed pointer to encrypted IPS', spec: SPEC.vhl },
+      { resource: 'Consent (IHE PCF)', change: 'Created: scope = IPS, expires in 14 days', spec: SPEC.pcf, why: 'Bounmy decides what is shared and for how long; the gateway checks this before releasing anything.', examples: [{ label: 'LA consent', url: IG.example('Consent', 'TrustDemoJ4Consent') }] },
+      { resource: 'VHL manifest', change: 'Signed pointer to encrypted IPS', spec: SPEC.vhl, why: 'Not a copy of the record: a signed, passcode-protected pointer back to Lao PDR.' },
     ],
   },
   'J4.1': {
@@ -489,8 +501,8 @@ export const STEP_TECH: Record<string, StepTech> = {
       online: true,
     },
     fhir: [
-      { resource: 'Bundle (IPS)', change: 'Read-only, not stored in Thailand', example: IG.example('Provenance', 'TrustDemoJ41Received') },
-      { resource: 'AuditEvent', change: 'Created at Lao Info Gateway', inspect: 'auditEvent', spec: SPEC.balp, example: IG.example('AuditEvent', 'TrustDemoJ41Access') },
+      { resource: 'Provenance', change: 'Summary viewed, not stored in Thailand', spec: SPEC.provenance, profile: { id: 'TrustDemoThVhlReceipt', country: 'Thailand' }, why: 'The Thai clinic keeps a note of what it saw and how it was verified, without copying the Lao record.', examples: [{ label: 'TH receipt', url: IG.example('Provenance', 'TrustDemoJ41Received') }, { label: 'LA summary', url: IG.example('Bundle', 'TrustDemoJ4Ips') }] },
+      { resource: 'AuditEvent', change: 'Created at Lao Info Gateway', inspect: 'auditEvent', spec: SPEC.balp, profile: { id: 'TrustDemoLaoVhlAccess', country: 'Lao PDR' }, why: 'The data stays home, so the access log does too: the family can see who looked, from where and when.', examples: [{ label: 'LA access', url: IG.example('AuditEvent', 'TrustDemoJ41Access') }, { label: 'LA refused', url: IG.example('AuditEvent', 'TrustDemoJ41WrongPasscode') }] },
     ],
   },
 };

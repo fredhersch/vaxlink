@@ -12,6 +12,8 @@ export const IG = {
   processes: 'https://litlfred.github.io/smart-trust-demo/business-processes.html',
   examples: 'https://litlfred.github.io/smart-trust-demo/vaxlink-examples.html',
   /** The page of one IG example, e.g. igExample('ConceptMap', 'TrustDemoProductToLaoEpi'). */
+  profile: (id: string) => `https://litlfred.github.io/smart-trust-demo/artifact/StructureDefinition-${id}.html`,
+  profiles: 'https://litlfred.github.io/smart-trust-demo/vaxlink-examples.html#country-profiles',
   example: (type: string, id: string) => `https://litlfred.github.io/smart-trust-demo/artifact/${type}-${id}.html`,
 };
 
@@ -46,21 +48,31 @@ export const SPEC = {
   ohsPipes: 'https://github.com/google/fhir-data-pipes',
 };
 
+type Bpmn = { file: string; title: string; igAnchor: string; scenarioAnchor: string };
+
 /** The IG's business process (BPMN) for each moment, drawn as SVG in public/bpmn/. */
-export const BPMN_FOR_STAGE: Record<string, { file: string; title: string }> = {
-  J1: { file: 'j1-birth-dose-dvc', title: 'J1 Issue the newborn’s birth-dose DVCs' },
-  J2a: { file: 'j2-chw-discovery-referral', title: 'J2 Discover and refer an unregistered infant' },
-  J2b: { file: 'j2-chw-discovery-referral', title: 'J2 Discover and refer an unregistered infant' },
-  J3a: { file: 'j3-clinic-verification-schedule', title: 'J3 Verify, import and schedule at the home clinic' },
-  J3b: { file: 'j3-clinic-verification-schedule', title: 'J3 Verify, import and schedule at the home clinic' },
-  'J4.0a': { file: 'j4-0-family-vhl-issuance', title: 'J4.0 Issue the family’s records to one phone as VHLs' },
-  'J4.0b': { file: 'j4-0-family-vhl-issuance', title: 'J4.0 Issue the family’s records to one phone as VHLs' },
-  'J4.1': { file: 'j4-1-vhl-point-of-care', title: 'J4.1 Read a family member’s records at the point of care' },
+export const BPMN_FOR_STAGE: Record<string, Bpmn> = {
+  J1: { file: 'j1-birth-dose-dvc', title: 'J1 Issue the newborn’s birth-dose DVCs', igAnchor: 'j1-issue-the-newborns-birth-dose-dvcs-in-country-a', scenarioAnchor: 'j1--born-abroad-thailand-birth-day' },
+  J2a: { file: 'j2-chw-discovery-referral', title: 'J2 Discover and refer an unregistered infant', igAnchor: 'j2-discover-and-refer-an-unregistered-infant-in-country-b', scenarioAnchor: 'j2--found-at-home-lao-pdr-3-weeks-later' },
+  J2b: { file: 'j2-chw-discovery-referral', title: 'J2 Discover and refer an unregistered infant', igAnchor: 'j2-discover-and-refer-an-unregistered-infant-in-country-b', scenarioAnchor: 'j2--found-at-home-lao-pdr-3-weeks-later' },
+  J3a: { file: 'j3-clinic-verification-schedule', title: 'J3 Verify, import and schedule at the home clinic', igAnchor: 'j3-verify-import-and-schedule-at-the-home-clinic', scenarioAnchor: 'j3--made-official-vientiane-district-health-center-4-weeks-later' },
+  J3b: { file: 'j3-clinic-verification-schedule', title: 'J3 Verify, import and schedule at the home clinic', igAnchor: 'j3-verify-import-and-schedule-at-the-home-clinic', scenarioAnchor: 'j3--made-official-vientiane-district-health-center-4-weeks-later' },
+  'J4.0a': { file: 'j4-0-family-vhl-issuance', title: 'J4.0 Issue the family’s records to one phone as VHLs', igAnchor: 'j40-issue-the-familys-records-to-one-phone-as-vhls', scenarioAnchor: 'j40--crossing-back-one-family-one-phone-lao-pdr-12-months-later' },
+  'J4.0b': { file: 'j4-0-family-vhl-issuance', title: 'J4.0 Issue the family’s records to one phone as VHLs', igAnchor: 'j40-issue-the-familys-records-to-one-phone-as-vhls', scenarioAnchor: 'j40--crossing-back-one-family-one-phone-lao-pdr-12-months-later' },
+  'J4.1': { file: 'j4-1-vhl-point-of-care', title: 'J4.1 Read a family member’s records at the point of care', igAnchor: 'j41-read-a-family-members-records-at-the-point-of-care-abroad', scenarioAnchor: 'j41--crossing-back-a-thai-doctor-sees-the-full-history-chiang-rai-12-months-later' },
 };
 
 export const BPMN_PROCESSES = Array.from(
   new Map(Object.entries(BPMN_FOR_STAGE).map(([stage, p]) => [p.file, { ...p, stages: [] as string[] }])).values(),
 ).map((p) => ({ ...p, stages: Object.entries(BPMN_FOR_STAGE).filter(([, q]) => q.file === p.file).map(([s]) => s) }));
+
+/** Where each process lives in the IG: its section, the process viewer, the scenario and the BPMN source. */
+export const bpmnLinks = (p: Bpmn) => ({
+  ig: `${IG.processes}#${p.igAnchor}`,
+  viewer: `${IG.site}cat-harness/processes/${p.file}.html`,
+  scenario: `${IG.journeys}#${p.scenarioAnchor}`,
+  source: `${IG.repo}/blob/main/processes/content/${p.file}.bpmn`,
+});
 
 /** BPMN SVG served with the site (base-relative, so it works under any Pages path). */
 export const bpmnSvg = (file: string) => `${import.meta.env.BASE_URL}bpmn/${file}.svg`;
