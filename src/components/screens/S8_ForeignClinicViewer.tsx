@@ -16,6 +16,7 @@ import {
   Check,
   XCircle,
   Syringe,
+  ArrowRight,
   Sparkles
 } from 'lucide-react';
 
@@ -26,7 +27,7 @@ interface S8Props {
 
 export const S8_ForeignClinicViewer: React.FC<S8Props> = ({ onRestart, onOpenFhirInspector }) => {
   const [passcode, setPasscode] = useState<string>('4829');
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(true);
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [passcodeError, setPasscodeError] = useState<string | null>(null);
   const [attemptsRemaining, setAttemptsRemaining] = useState<number>(3);
   const [showManifestJson, setShowManifestJson] = useState<boolean>(false);
@@ -347,14 +348,22 @@ export const S8_ForeignClinicViewer: React.FC<S8Props> = ({ onRestart, onOpenFhi
           <span>{showManifestJson ? 'Hide Audit Log' : 'Inspect Fetched VHL Manifest & Lao AuditEvent JSON'}</span>
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={onRestart}
-            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-sm transition"
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold shadow-xs transition"
           >
             <RotateCcw className="w-4 h-4" />
-            <span>Complete Walkthrough & Restart (J1)</span>
+            <span>Restart Demo (J1)</span>
           </button>
+
+          <a
+            href="#/discuss"
+            className="flex items-center gap-2 px-5 py-2.5 bg-dpi-cobalt hover:bg-dpi-cobalt-dark text-white rounded-lg text-xs font-semibold shadow-sm transition"
+          >
+            <span>Finish Demo & Open Policy Discussion</span>
+            <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </div>

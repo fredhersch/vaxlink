@@ -98,7 +98,7 @@ export const S4_ClinicVerification: React.FC<S4Props> = ({ onNext }) => {
                 Incoming CHW Referral
               </span>
               <span className="text-[10px] font-mono bg-sky-50 text-sky-800 px-1.5 py-0.5 rounded border border-sky-200">
-                ServiceRequest #req-verify-001
+                ServiceRequest / TrustDemoJ2Referral
               </span>
             </div>
             <p className="text-xs text-clinical-steel">

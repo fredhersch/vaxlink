@@ -129,11 +129,16 @@ export const S3_ChwScanReferral: React.FC<S3Props> = ({ onNext }) => {
 
         {/* Clinic Referral Builder Card (FHIR ServiceRequest) */}
         <div className="bg-white rounded-xl border border-clinical-divider p-3.5 shadow-sm space-y-2.5">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-            <FilePlus2 className="w-4 h-4 text-dpi-cobalt" />
-            <h4 className="font-bold text-xs text-clinical-ink">
-              Clinic Verification Referral (FHIR ServiceRequest)
-            </h4>
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div className="flex items-center gap-2">
+              <FilePlus2 className="w-4 h-4 text-dpi-cobalt" />
+              <h4 className="font-bold text-xs text-clinical-ink">
+                Clinic Referral (FHIR ServiceRequest)
+              </h4>
+            </div>
+            <span className="text-[9px] font-mono bg-sky-50 text-sky-800 px-1.5 py-0.5 rounded border border-sky-200">
+              TrustDemoJ2Referral
+            </span>
           </div>
 
           <div>

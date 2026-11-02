@@ -181,14 +181,19 @@ export const S5_TerminologyAdjudication: React.FC<S5Props> = ({ onNext }) => {
                 </div>
                 <pre className="text-[11px] overflow-x-auto">{`[
   {
-    "system": "http://smart.who.int/immunizations/CodeSystem/PreQual",
+    "system": "http://smart.who.int/trust-demo/CodeSystem/TrustDemoVaccineProduct",
     "code": "vp-hepb-peds-monovalent",
-    "display": "WHO PreQual Hepatitis B Monovalent"
+    "display": "Hepatitis B vaccine, paediatric, monovalent"
   },
   {
-    "system": "http://moh.gov.la/fhir/CodeSystem/epi-schedule",
+    "system": "http://smart.who.int/trust-demo/CodeSystem/TrustDemoLaoEpiSchedule",
     "code": "LAO-EPI-HEPB-BD",
-    "display": "Lao EPI: HepB-BD (Birth Dose)"
+    "display": "Hepatitis B birth dose"
+  },
+  {
+    "system": "http://hl7.org/fhir/sid/cvx",
+    "code": "08",
+    "display": "Hep B, adolescent or pediatric"
   }
 ]`}</pre>
               </div>

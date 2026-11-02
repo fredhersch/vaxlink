@@ -17,7 +17,6 @@ import {
 import { ScreenId } from '../../types';
 import { CHAPTERS, JOURNEY_STEPS, PERSONA_BY_ID, PersonaId, RECORD_TRUST_LADDER } from '../../data/journeyData';
 import { EmotionBadge, PersonaAvatar, PersonaText, TrustMeter, countryChip } from './shared';
-import { MomentIllustration } from './MomentIllustration';
 import { MomentPicture } from './MomentPicture';
 import { ConceptMapIllustration } from './ConceptMapIllustration';
 import { stepHref } from '../../routes';
@@ -145,9 +144,8 @@ export const Walkthrough: React.FC<Props> = ({ stepIndex, onChangeStep, onOpenSc
                   {step.title}
                 </a>
               </h2>
-              <div className="sm:w-64 flex-shrink-0 space-y-1.5">
+              <div className="sm:w-64 flex-shrink-0">
                 <MomentPicture chapterId={step.chapterId} />
-                <MomentIllustration chapterId={step.chapterId} size="sm" />
               </div>
             </div>
             <p className="text-base md:text-lg text-slate-700 leading-relaxed">

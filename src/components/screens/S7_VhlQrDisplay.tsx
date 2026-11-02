@@ -26,15 +26,15 @@ export const S7_VhlQrDisplay: React.FC<S7Props> = ({ onNext }) => {
   const [activeTravellerIndex, setActiveTravellerIndex] = useState<number>(0);
 
   const travellers = [
-    { name: "Somsack Sengmany", role: "Infant (12m)", record: "IPS Immunizations (6 Doses)" },
-    { name: "Bounmy Sengmany", role: "Father (29y)", record: "IPS MedicationStatement" },
-    { name: "Khamla Sengmany", role: "Mother (26y)", record: "IPS Maternal Summary" },
+    { id: "somsack", name: "Somsack Sengmany", role: "Infant (12m)", record: "IPS Immunizations (6 Doses)" },
+    { id: "bounmy", name: "Bounmy Sengmany", role: "Father (29y)", record: "IPS MedicationStatement" },
+    { id: "khamla", name: "Khamla Sengmany", role: "Mother (26y)", record: "IPS Maternal Summary" },
   ];
 
   const currentTraveller = travellers[activeTravellerIndex];
 
   // Simulated Verifiable Health Link URL
-  const vhlManifestUrl = `https://portal.moh.gov.la/vhl/manifest/vhl-lao-somsack-2026?token=e4a899bc01&exp=1797292800#key=f91b7c3d2e5a8812`;
+  const vhlManifestUrl = `https://portal.moh.gov.la/vhl/manifest/vhl-lao-${currentTraveller.id}-2026?token=e4a899bc01&exp=1797292800#key=f91b7c3d2e5a8812`;
 
   const handleCycle = () => {
     setActiveTravellerIndex((prev) => (prev + 1) % travellers.length);
@@ -50,15 +50,16 @@ export const S7_VhlQrDisplay: React.FC<S7Props> = ({ onNext }) => {
               Travel Credential — {currentTraveller.name}
             </h2>
             <div className="text-[10px] text-clinical-steel">
-              Traveller {activeTravellerIndex + 1} of 3 &bull; {currentTraveller.role}
+              Traveller {activeTravellerIndex + 1} of {travellers.length} &bull; {currentTraveller.role}
             </div>
           </div>
           <button
             onClick={handleCycle}
             className="flex items-center gap-1 text-[10px] font-mono bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded transition"
+            title="Switch to next family member's credential"
           >
             <Users className="w-3 h-3 text-dpi-cobalt" />
-            <span>Cycle (1/3)</span>
+            <span>Cycle ({activeTravellerIndex + 1}/{travellers.length})</span>
           </button>
         </div>
       </div>
