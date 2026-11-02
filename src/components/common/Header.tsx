@@ -1,7 +1,9 @@
 import React from 'react';
 import { ActiveTab, ScreenId } from '../../types';
 import { JOURNEY_STAGES } from '../../data/storylineData';
-import { Smartphone, RotateCcw, Globe2, ChevronRight, Eye, Route } from 'lucide-react';
+import { Smartphone, RotateCcw, Globe2, ChevronRight, Eye, Route, BookOpen, Github } from 'lucide-react';
+import { IG } from '../../data/links';
+import { screenHref, viewHref } from '../../routes';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -23,7 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
   setIsPresenterMode,
 }) => {
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-clinical-divider shadow-sm">
+    <header className="md:sticky md:top-0 z-50 bg-white border-b border-clinical-divider shadow-sm">
       {/* Top Banner: Context & Trust Strip */}
       <div className="bg-slate-900 text-slate-300 text-xs px-4 md:px-8 py-1.5 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800">
         <div className="flex items-center gap-3">
@@ -80,8 +82,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Mode switcher: the journey (story + technical layer) or the live device demo */}
         <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-medium text-slate-600 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('journeys')}
+          <a
+            href={viewHref('overview')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
               activeTab === 'journeys'
                 ? 'bg-white text-clinical-ink shadow-sm font-semibold'
@@ -90,10 +92,10 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Route className="w-3.5 h-3.5 text-rose-500" />
             <span>Journeys</span>
-          </button>
+          </a>
 
-          <button
-            onClick={() => setActiveTab('screens')}
+          <a
+            href={screenHref(currentScreenId)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition whitespace-nowrap ${
               activeTab === 'screens'
                 ? 'bg-white text-clinical-ink shadow-sm font-semibold'
@@ -102,11 +104,31 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Smartphone className="w-3.5 h-3.5 text-sky-600" />
             <span>Device Demo</span>
-          </button>
+          </a>
         </div>
 
-        {/* Global Reset */}
-        <div className="flex items-center gap-2">
+        {/* The FHIR IG this demo illustrates, and global reset */}
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={IG.site}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs text-sky-800 px-2.5 py-1.5 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 transition"
+            title="The FHIR implementation guide this demo illustrates"
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>FHIR IG</span>
+          </a>
+          <a
+            href={IG.repo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs text-clinical-steel hover:text-slate-900 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition"
+            title="Source of the IG on GitHub"
+          >
+            <Github className="w-3.5 h-3.5" />
+            <span>IG source</span>
+          </a>
           <button
             onClick={onResetSimulation}
             className="flex items-center gap-1.5 text-xs text-clinical-steel hover:text-slate-900 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition"
@@ -120,8 +142,8 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Screen / Stage Navigation Scrubber (Active when on Screens tab) */}
       {activeTab === 'screens' && (
-        <div className="bg-slate-50 border-t border-clinical-divider px-4 md:px-8 py-2 overflow-x-auto">
-          <div className="flex items-center gap-1.5 min-w-max">
+        <div className="bg-slate-50 border-t border-clinical-divider px-4 md:px-8 py-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[11px] font-semibold text-clinical-steel uppercase tracking-wider mr-2">
               Journey Stage:
             </span>
@@ -130,8 +152,9 @@ export const Header: React.FC<HeaderProps> = ({
               return (
                 <React.Fragment key={stage.screenId}>
                   {idx > 0 && <ChevronRight className="w-3 h-3 text-slate-300 flex-shrink-0" />}
-                  <button
-                    onClick={() => setCurrentScreenId(stage.screenId)}
+                  <a
+                    href={screenHref(stage.screenId)}
+                    aria-current={isActive ? 'step' : undefined}
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition ${
                       isActive
                         ? 'bg-sky-600 text-white font-semibold shadow-sm'
@@ -139,8 +162,8 @@ export const Header: React.FC<HeaderProps> = ({
                     }`}
                   >
                     <span className="font-mono text-[10px] opacity-80">{stage.stageCode}</span>
-                    <span>{stage.title}</span>
-                  </button>
+                    <span className="hidden sm:inline">{stage.title}</span>
+                  </a>
                 </React.Fragment>
               );
             })}

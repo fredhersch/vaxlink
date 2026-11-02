@@ -4,6 +4,8 @@ import { ARCH_LAYERS, BLOCK_BY_ID, BuildingBlockId, STEP_TECH } from '../../data
 import { ScreenId } from '../../types';
 import { CHAPTERS, JOURNEY_STEPS, PERSONAS, PersonaId, RECORD_TRUST_LADDER } from '../../data/journeyData';
 import { EmotionBadge, PersonaAvatar, TrustMeter, countryChip } from './shared';
+import { MomentIllustration } from './MomentIllustration';
+import { stepHref } from '../../routes';
 
 interface Props {
   selectedStep: number;
@@ -92,6 +94,7 @@ export const JourneyMap: React.FC<Props> = ({ selectedStep, onSelectStep, onPres
                 className="bg-slate-900 text-white px-3 py-2 border-l border-slate-700 flex items-center gap-2"
               >
                 <span className="w-5 h-5 rounded-full bg-white/15 text-[10px] font-bold flex items-center justify-center">{ch.number}</span>
+                <MomentIllustration chapterId={ch.id} size="sm" />
                 <span className="font-bold text-sm whitespace-nowrap">{ch.title}</span>
                 {span > 1 && <span className="text-[10px] text-slate-400 whitespace-nowrap">{ch.when}</span>}
                 <span className={`ml-auto text-[9px] font-semibold px-1.5 py-0.5 rounded ${countryChip(ch.country)}`}>{ch.country}</span>
@@ -108,7 +111,9 @@ export const JourneyMap: React.FC<Props> = ({ selectedStep, onSelectStep, onPres
               className={`${colClass(i)} p-2.5 border-l border-b border-slate-200 ${i === selectedStep ? 'border-t-2 border-t-sky-500' : ''}`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="font-mono text-[10px] font-bold text-slate-500">{s.stageCode}</span>
+                <a href={stepHref(s.stageCode)} onClick={(e) => e.stopPropagation()} className="font-mono text-[10px] font-bold text-sky-700 hover:underline" title="Link to this moment">
+                  {s.stageCode}
+                </a>
                 <span className="text-[9px] text-slate-400">{s.when.split('·')[0]}</span>
               </div>
               <div className="font-bold text-[12px] text-slate-900 leading-snug">{s.title}</div>
