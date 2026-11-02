@@ -23,7 +23,12 @@ interface S7Props {
 export const S7_VhlQrDisplay: React.FC<S7Props> = ({ onNext }) => {
   const [showPasscode, setShowPasscode] = useState<boolean>(false);
   const [passcodeEnabled, setPasscodeEnabled] = useState<boolean>(true);
-  const [activeTravellerIndex, setActiveTravellerIndex] = useState<number>(0);
+  const [activeTravellerIndex, setActiveTravellerIndex] = useState<number>(() => {
+    if (typeof window !== 'undefined' && window.location.hash.includes('traveller=1')) {
+      return 1;
+    }
+    return 0;
+  });
 
   const travellers = [
     { id: "somsack", name: "Somsack Sengmany", role: "Infant (12m)", record: "IPS Immunizations (6 Doses)" },

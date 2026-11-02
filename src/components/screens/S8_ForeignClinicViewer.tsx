@@ -27,7 +27,12 @@ interface S8Props {
 
 export const S8_ForeignClinicViewer: React.FC<S8Props> = ({ onRestart, onOpenFhirInspector }) => {
   const [passcode, setPasscode] = useState<string>('4829');
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.hash.includes('unlocked=true');
+    }
+    return false;
+  });
   const [passcodeError, setPasscodeError] = useState<string | null>(null);
   const [attemptsRemaining, setAttemptsRemaining] = useState<number>(3);
   const [showManifestJson, setShowManifestJson] = useState<boolean>(false);
