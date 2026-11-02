@@ -1,6 +1,11 @@
 {
   "resourceType": "Patient",
   "id": "TrustDemoSomsack",
+  "meta": {
+    "profile": [
+      "http://smart.who.int/trust-demo/StructureDefinition/TrustDemoLaoPatient"
+    ]
+  },
   "identifier": [
     {
       "system": "http://smart.who.int/trust-demo/sid/lao-temporary-id",

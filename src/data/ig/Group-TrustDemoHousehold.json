@@ -1,14 +1,19 @@
 {
   "resourceType": "Group",
   "id": "TrustDemoHousehold",
+  "meta": {
+    "profile": [
+      "http://smart.who.int/trust-demo/StructureDefinition/TrustDemoLaoHousehold"
+    ]
+  },
+  "type": "person",
+  "membership": "enumerated",
   "identifier": [
     {
       "system": "http://smart.who.int/trust-demo/sid/lao-household-id",
       "value": "HH-LAO-204"
     }
   ],
-  "type": "person",
-  "membership": "enumerated",
   "code": {
     "coding": [
       {

@@ -1,6 +1,11 @@
 {
   "resourceType": "Provenance",
   "id": "TrustDemoJ3Verification",
+  "meta": {
+    "profile": [
+      "http://smart.who.int/trust-demo/StructureDefinition/TrustDemoLaoDvcVerification"
+    ]
+  },
   "target": [
     {
       "reference": "Immunization/TrustDemoJ3HepB"
