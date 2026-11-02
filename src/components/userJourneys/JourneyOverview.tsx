@@ -8,7 +8,6 @@ import {
   RECORD_TRUST_LADDER,
 } from '../../data/journeyData';
 import { ExtLink, PersonaAvatar, PersonaText, countryChip, trustColor } from './shared';
-import { MomentIllustration } from './MomentIllustration';
 import { MomentPicture } from './MomentPicture';
 import { IG } from '../../data/links';
 
@@ -83,9 +82,8 @@ export const JourneyOverview: React.FC<Props> = ({ onStartWalkthrough, onOpenPer
                   {ch.when} · {ch.where}
                 </div>
                 <p className="text-xs text-slate-700 leading-relaxed">{ch.summary}</p>
-                <div className="mt-3 space-y-2">
+                <div className="mt-3">
                   <MomentPicture chapterId={ch.id} />
-                  <MomentIllustration chapterId={ch.id} />
                 </div>
                 <div className="flex -space-x-1.5 mt-4">
                   {people.map((pid) => {

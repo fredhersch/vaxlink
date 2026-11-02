@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Keyboard } from 'lucide-react';
 import { ActiveTab, ScreenId, DeviceType } from './types';
 import { JOURNEY_STAGES } from './data/storylineData';
 import { Header } from './components/common/Header';
@@ -83,6 +84,27 @@ export function App() {
   }, [activeTab, journeyView, journeyStepIndex, journeyPersona, selectedBlock, currentScreenId]);
 
   const currentStageMetadata = JOURNEY_STAGES.find((s) => s.screenId === currentScreenId) || JOURNEY_STAGES[0];
+
+  const SCREENS: ScreenId[] = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'];
+
+  useEffect(() => {
+    if (activeTab !== 'screens') return;
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      const curIndex = SCREENS.indexOf(currentScreenId);
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        if (curIndex < SCREENS.length - 1) setCurrentScreenId(SCREENS[curIndex + 1]);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        if (curIndex > 0) setCurrentScreenId(SCREENS[curIndex - 1]);
+      } else if (e.key >= '1' && e.key <= '8') {
+        const num = parseInt(e.key, 10) - 1;
+        if (num >= 0 && num < SCREENS.length) setCurrentScreenId(SCREENS[num]);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [activeTab, currentScreenId]);
 
   const openScreenFromJourney = (screenId: ScreenId) => {
     setCurrentScreenId(screenId);
@@ -226,20 +248,25 @@ export function App() {
 
         {/* Device Demo: interactive screens S1–S8 */}
         {activeTab === 'screens' && (
-          <div className="px-4 md:px-8 pt-3 -mb-2 flex items-center gap-2 text-xs">
-            <button
-              onClick={() => {
-                const idx = JOURNEY_STEPS.findIndex((s) => s.screenId === currentScreenId);
-                if (idx >= 0) setJourneyStepIndex(idx);
-                setJourneyView('walkthrough');
-                setActiveTab('journeys');
-              }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 text-rose-800 font-semibold hover:bg-rose-100"
-            >
-              ← Back to the user journey
-            </button>
-            <span className="text-clinical-steel">
-              You are looking at what {currentStageMetadata.actor} sees at this moment.
+          <div className="px-4 md:px-8 pt-3 -mb-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const idx = JOURNEY_STEPS.findIndex((s) => s.screenId === currentScreenId);
+                  if (idx >= 0) setJourneyStepIndex(idx);
+                  setJourneyView('walkthrough');
+                  setActiveTab('journeys');
+                }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-rose-200 bg-rose-50 text-rose-800 font-semibold hover:bg-rose-100"
+              >
+                ← Back to the user journey
+              </button>
+              <span className="text-clinical-steel">
+                You are looking at what {currentStageMetadata.actor} sees at this moment.
+              </span>
+            </div>
+            <span className="hidden md:flex items-center gap-1 text-[10px] text-slate-400 font-mono">
+              <Keyboard className="w-3.5 h-3.5" /> ← → · 1–8
             </span>
           </div>
         )}
